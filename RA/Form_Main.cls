@@ -104,7 +104,7 @@ Err_cmdDocRequest_Click:
 
 End Sub
 
-Private Sub cmdGit_Click()  'Added 8/28/18 for GitHub version control Mei
+Private Sub cmdGit_Click()  'Added 8/28/18 for GitHub version control Mei  Use the button only when exporting the whole DB.
 Dim wbPath As String
 Dim vbComp As VBComponent
 Dim exportPath As String
