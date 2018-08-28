@@ -104,7 +104,7 @@ Err_cmdDocRequest_Click:
 
 End Sub
 
-Private Sub cmdGit_Click()
+Private Sub cmdGit_Click()  'Added 8/28/18 for GitHub version control Mei
 Dim wbPath As String
 Dim vbComp As VBComponent
 Dim exportPath As String
