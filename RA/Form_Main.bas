@@ -112,7 +112,7 @@ Dim exportPath As String
   wbPath = "C:\Github\RA"
   
   For Each vbComp In Application.VBE.ActiveVBProject.VBComponents
-    exportPath = wbPath & "\" & vbComp.Name & Format$(Now, "_yyyymmdd_hhnnss")
+    exportPath = wbPath & "\" & vbComp.Name
 '    If vbComp.Type = vbext_ct_ClassModule Or vbComp.Type = vbext_ct_StdModule Then
          vbComp.Export exportPath
         Select Case vbComp.Type
