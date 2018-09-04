@@ -1,4 +1,4 @@
-Option Compare Database
+Option Compare Database     '9/4/18  add some comments for Git testing...
 Option Explicit
 Declare Function GetUserName& Lib "advapi32.dll" Alias "GetUserNameA" (ByVal lpBuffer As String, nSize As Long)
 
