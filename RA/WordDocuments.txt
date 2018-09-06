@@ -1,1536 +1,16 @@
-ÔªøOption Compare Database
-Option Explicit
-Dim NextNumber, newNextNumber, lettercounter As Integer
-'Dim DocName As String
-Dim opTrustee, opDebtor, Title, Chapter, AKA, LName, fName As String
-                         
-Private Function GetDCAttorneyname(NMorEmail As Integer)
-Dim i As Integer
 
-If NMorEmail = 0 Then
-    For i = 0 To Forms!ForeclosureDetails!lstDCAtty.ListCount
-        If i < Forms!ForeclosureDetails!lstDCAtty.ListCount - 1 Then
-            If i < Forms!ForeclosureDetails!lstDCAtty.ListCount - 2 And Forms!ForeclosureDetails!lstDCAtty.Selected(i) Then
-                GetDCAttorneyname = GetDCAttorneyname & vbNewLine & Forms!ForeclosureDetails!lstDCAtty.Column(1, i) & _
-                ", Esq. (D.C. Bar # " & DLookup("DCBar", "Staff", "ID=" & Forms!ForeclosureDetails!lstDCAtty.Column(0, i)) & ")"
-            End If
-        End If
-    Next i
-ElseIf NMorEmail = 1 Then
-        For i = 0 To Forms!ForeclosureDetails!lstDCAtty.ListCount
-        If i < Forms!ForeclosureDetails!lstDCAtty.ListCount - 1 Then
-            If i < Forms!ForeclosureDetails!lstDCAtty.ListCount - 2 And Forms!ForeclosureDetails!lstDCAtty.Selected(i) Then
-                GetDCAttorneyname = GetDCAttorneyname & DLookup("EMail", "Staff", "ID=" & Forms!ForeclosureDetails!lstDCAtty.Column(0, i)) & vbNewLine
-            End If
-        End If
-    Next i
-
-End If
-
-End Function
-Private Sub BKConsTermTrustDebtor(DocName As String)
-
-If DocName = "ConsentTerminating7" Then
-
-    Select Case Forms![Print Consent Order Terminating 7]!optTrustee
-        Case 0
-             Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-                Case 0  ' defaulted
-                    Title = "Order Terminating Automatic Stay"
-                    opTrustee = "the debtor(s) having failed to respond"
-                    opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-                Case 1  ' agreed
-                    Title = "Consent Order Terminating Automatic Stay"
-                    opTrustee = "the parties having reached an agreement"
-                    opDebtor = ""
-             End Select
-    
-        Case 1  ' filed report
-            Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-                Case 0
-                    Title = "Order Terminating Automatic Stay"
-                    opTrustee = "the trustee having filed a report of no distribution, the debtor(s) having failed to respond"
-                    opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-                Case 1
-                    Title = "Consent Order Terminating Automatic Stay"
-                    opTrustee = "the trustee having filed a report of no distribution, the parties having reached an agreement"
-                    opDebtor = ""
-            End Select
-    
-        Case 2  ' defaulted
-            Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-                Case 0
-                    Title = "Order Terminating Automatic Stay"
-                    opTrustee = "the parties having failed to respond"
-                    opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s) and the Chapter 7 Trustee; and be it further"
-                Case 1
-                    Title = "Consent Order Terminating Automatic Stay as to Debtor and Default as to Chapter 7 Trustee"
-                    opTrustee = "the trustee having failed to file an answer, the debtor(s) and movant having reached an agreement"
-                    opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be an it is hereby, entered by Default as to the Chapter 7 Trustee; and be it further"
-                End Select
-    
-        Case 3  ' agreed
-            Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-                Case 0
-                    Title = "Consent Order Terminating Automatic Stay as to Trustee and Default as to Debtor(s)"
-                    opTrustee = "the trustee and movant having reached an agreement, the debtor(s) having failed to respond"
-                    opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-                Case 1
-                    Title = "Consent Order Terminating Automatic Stay"
-                    opTrustee = "the parties having reached an agreement"
-                    opDebtor = ""
-            End Select
-    End Select
-    
-ElseIf DocName = "ConsentTerminating7VAWD" Then
-    
-    Select Case Forms![Print Consent Order Terminating 7]!optTrustee
-    
-    Case 0  '   not a party
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0  ' defaulted
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1  ' agreed
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-
-    Case 1  ' filed report
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the trustee having filed a report of no distribution, the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the trustee having filed a report of no distribution, the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-
-    Case 2  ' defaulted
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the parties having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s) and the Chapter 7 Trustee; and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay as to Debtor and Default as to Chapter 7 Trustee"
-                opTrustee = "the trustee having failed to file an answer, the debtor(s) and movant having reached an agreement"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be an it is hereby, entered by Default as to the Chapter 7 Trustee; and be it further"
-            End Select
-
-    Case 3  ' agreed
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Consent Order Terminating Automatic Stay as to Trustee and Default as to Debtor(s)"
-                opTrustee = "the trustee and movant having reached an agreement, the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-
-  End Select
-  
-ElseIf DocName = "ConsentTerminating7VAED" Then
-  
-  Select Case Forms![Print Consent Order Terminating 7]!optTrustee
-    
-    Case 0  '   not a party
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0  ' defaulted
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1  ' agreed
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-
-    Case 1  ' filed report
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the trustee having filed a report of no distribution, the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the trustee having filed a report of no distribution, the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-
-    Case 2  ' defaulted
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Order Terminating Automatic Stay"
-                opTrustee = "the parties having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s) and the Chapter 7 Trustee; and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay as to Debtor and Default as to Chapter 7 Trustee"
-                opTrustee = "the trustee having failed to file an answer, the debtor(s) and movant having reached an agreement"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be an it is hereby, entered by Default as to the Chapter 7 Trustee; and be it further"
-            End Select
-
-    Case 3  ' agreed
-        Select Case Forms![Print Consent Order Terminating 7]!optDebtor
-            Case 0
-                Title = "Consent Order Terminating Automatic Stay as to Trustee and Default as to Debtor(s)"
-                opTrustee = "the trustee and movant having reached an agreement, the debtor(s) having failed to respond"
-                opDebtor = vbNewLine & vbNewLine & "          ORDERED that the Motion for Relief from Automatic Stay be and it is hereby, entered by Default as to the Debtor(s); and be it further"
-            Case 1
-                Title = "Consent Order Terminating Automatic Stay"
-                opTrustee = "the parties having reached an agreement"
-                opDebtor = ""
-        End Select
-End Select
-ElseIf DocName = "ConsentTerminatingWD13" Then
-    If Chapter = 13 Then
-         Select Case Forms![Print Consent Order Terminating 13]!optTrustee
-            Case 0
-                opTrustee = "the parties having reached an agreement,"
-            Case 1
-                opTrustee = "the trustee having filed a report of no distribution, the parties having reached an agreement, "
-            Case 2
-                opTrustee = "the trustee having failed to file an answer, the debtor(s) and movant having reached an agreement, "
-            Case 3
-                opTrustee = "the parties having reached an agreement,"
-        End Select
-    ElseIf Chapter = 11 Then
-         Select Case Forms![Print Consent Order Terminating 11]!optTrustee
-        Case 0
-                opTrustee = "the parties having reached an agreement,"
-            Case 1
-                opTrustee = "the trustee having filed a report of no distribution, the parties having reached an agreement, "
-            Case 2
-                opTrustee = "the trustee having failed to file an answer, the debtor(s) and movant having reached an agreement, "
-            Case 3
-                opTrustee = "the parties having reached an agreement,"
-        End Select
-    End If
-End If
-End Sub
-Private Function GetNextLetter() As String
-Dim strAlpha As String
-Dim t As String
-
-strAlpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-'If LetterCounter = 0 Then
-'    LetterCounter = 1
-'Else
-'End If
  
-    t = Mid(strAlpha, lettercounter, 1)
-   
-    GetNextLetter = t
-    lettercounter = lettercounter + 1
-
-End Function
-Private Function GetNextNumber() As String
-
-GetNextNumber = Space$(10) & NextNumber & ".  "
-NextNumber = NextNumber + 1
-
-End Function
-
-Private Function GetNewNextNumber() As String
-
-GetNewNextNumber = Space$(10) & newNextNumber & ".  "
-newNextNumber = newNextNumber + 1
-
-End Function
-
-Private Function AssignmentInfo() As String
-
-    Select Case Forms!BankruptcyDetails!AssignBy
-        Case 1              ' DOT
-           
-                Select Case Forms!BankruptcyDetails!AssignByDOT
-                
-                    Case 1      ' assignment  'Me!Subform1.Form.RecordSource
-                                    
-                        AssignmentInfo = Forms!BankruptcyDetails.Form.sfrmBKLoanInfo!OriginalBeneficiary & " assigned its interest to " & Forms![case list]!Investor
-                    Case 2      ' merger
-                        AssignmentInfo = Trim$(Forms!BankruptcyDetails!OMergerInfo) & " is now the beneficiary of the Deed of Trust due to merger."
-                End Select
-        
-        Case 2   ' note   'Me!Subform1.Form.RecordSource
-            AssignmentInfo = "The Promissory Note has been transferred from " & Forms!BankruptcyDetails.Form.sfrmBKLoanInfo!OriginalBeneficiary & " to " & Forms![case list]!Investor
-                   
-    If Right$(AssignmentInfo, 1) <> "." Then AssignmentInfo = AssignmentInfo & "."
-    
-    End Select
-
-If IsNull(Right$(AssignmentInfo, 1)) Then AssignmentInfo = ""
-
-End Function
-
-Private Sub FillField(WordDocument As Word.Document, FieldName As String, Replacement As String)
-Dim ReplacementData As String, ReplacementString As String, FindData As String, ChunkBegins As Integer, ChunkSize As Integer
-'test
-ReplacementString = RemoveLF(Replacement)
-
-If Len(ReplacementString) > 200 Then    ' divide into chunks
-    FindData = FieldName
-    ChunkBegins = 1
-    Do While ChunkBegins < Len(ReplacementString)
-        ChunkSize = 200
-        If ChunkBegins + ChunkSize > Len(ReplacementString) Then
-            ChunkSize = Len(ReplacementString) - ChunkBegins + 1
-        End If
-        Do While Mid$(ReplacementString, ChunkSize, 1) = "^"    ' don't split a 'symbol'
-            ChunkSize = ChunkSize - 1
-        Loop
-        ReplacementData = Mid$(ReplacementString, ChunkBegins, ChunkSize) & "<<<<More>>>>"
-        GoSub Replace
-        FindData = "<<More>>"
-        ChunkBegins = ChunkBegins + ChunkSize
-    Loop
-    ReplacementData = ""    ' remove last <<More>> tag
-    GoSub Replace
-Else
-    FindData = FieldName
-    ReplacementData = ReplacementString
-    GoSub Replace
-End If
-Exit Sub
-
-Replace:
-Dim rngStory As Word.Range, lngJunk As Long, oShp As Shape
-
-' This may be needed work around a bug with certain headers/footers.
-' But the side effect is to create headers and footers that take up space (making the margins look taller.)
-''lngJunk = WordDocument.Sections(1).Headers(1).Range.StoryType
-
-'Iterate through all story types in the current document
-For Each rngStory In WordDocument.StoryRanges
-    'Iterate through all linked stories
-    Do
-        With rngStory.Find
-            .ClearFormatting
-            .Replacement.ClearFormatting
-            .Text = "<<" & FindData & ">>"
-            .Replacement.Text = ReplacementData
-            .Execute Replace:=wdReplaceAll
-        End With
-        On Error Resume Next
-        If rngStory.ShapeRange.Count > 0 Then
-            For Each oShp In rngStory.ShapeRange
-                If oShp.TextFrame.HasText Then
-                    With oShp.TextFrame.TextRange.Find
-                        .ClearFormatting
-                        .Replacement.ClearFormatting
-                        .Text = "<<" & FindData & ">>"
-                        .Replacement.Text = ReplacementData
-                        .Execute Replace:=wdReplaceAll
-                    End With
-                End If
-            Next
-        End If
-        On Error GoTo 0
-        'Get next linked story (if any)
-        Set rngStory = rngStory.NextStoryRange
-    Loop Until rngStory Is Nothing
-Next
-
-Return
-End Sub
-
-Private Sub FillFieldSOTNationsVA(WordDocument As Word.Document, FieldName As String, Replacement As String)
-
-Dim ReplacementData As String, ReplacementString As String, FindData As String, ChunkBegins As Integer, ChunkSize As Integer
-'test
-ReplacementString = RemoveLF(Replacement)
-ReplacementString = Replace(Replacement, "CName", "")    'Remove the cname attached at the company name
-
-If Len(ReplacementString) > 200 Then    ' divide into chunks
-    FindData = FieldName
-    ChunkBegins = 1
-    Do While ChunkBegins < Len(ReplacementString)
-        ChunkSize = 200
-        If ChunkBegins + ChunkSize > Len(ReplacementString) Then
-            ChunkSize = Len(ReplacementString) - ChunkBegins + 1
-        End If
-        Do While Mid$(ReplacementString, ChunkSize, 1) = "^"    ' don't split a 'symbol'
-            ChunkSize = ChunkSize - 1
-        Loop
-        ReplacementData = Mid$(ReplacementString, ChunkBegins, ChunkSize) & "<<<<More>>>>"
-        GoSub Replace
-        FindData = "<<More>>"
-        ChunkBegins = ChunkBegins + ChunkSize
-    Loop
-    ReplacementData = ""    ' remove last <<More>> tag
-    GoSub Replace
-Else
-    FindData = FieldName
-    ReplacementData = ReplacementString
-    GoSub Replace
-End If
-Exit Sub
-
-Replace:
-Dim rngStory As Word.Range, lngJunk As Long, oShp As Shape
-
-' This may be needed work around a bug with certain headers/footers.
-' But the side effect is to create headers and footers that take up space (making the margins look taller.)
-''lngJunk = WordDocument.Sections(1).Headers(1).Range.StoryType
-
-If WordDocument = "Deed of Appointment NationStar VA.doc" And Left(FieldName, 4) = "Item" And NextNumber = 75 And InStr(Trim(Replacement), "CName") = 0 Or _
-    (WordDocument = "Assignment SLS.doc" And NextNumber = 75) Then    ' NextNumber here is served as JurisdictionID   Mei
-        For Each rngStory In WordDocument.StoryRanges
-            Do
-                With rngStory.Find
-                    .ClearFormatting
-                    .Replacement.ClearFormatting
-                    .Text = "<<" & FindData & ">>"
-                    If InStr(ReplacementData, ":") > 0 Then
-                        Dim Grantorname, GrantAKA, GLName As String
-                        GrantAKA = Replace([ReplacementData], ":", "")
-                        Grantorname = Left(Trim([ReplacementData]), InStr([ReplacementData], ":") - 1)    'Grantor's name remains
-                        GLName = Right(Grantorname, InStr(Grantorname, " ") + 2)            '???
-                        .Replacement.Text = GrantAKA
-                        .Execute Replace:=wdReplaceAll
-                        .Text = GLName
-                        .Replacement.Text = GLName
-                        .Replacement.Font.Underline = wdUnderlineSingle
-                        .Execute Replace:=wdReplaceAll
-                        .Text = LName
-                        .Replacement.Text = LName
-                        .Replacement.Font.Underline = wdUnderlineSingle
-                        .Execute Replace:=wdReplaceAll
-                    Else
-                        .Replacement.Text = ReplacementData
-    '                    .Replacement.Font.Underline = wdUnderlineSingle
-                        .Execute Replace:=wdReplaceAll
-                        .Text = Right(Trim([ReplacementData]), Len(Trim([ReplacementData])) - InStr(1, [ReplacementData], " "))
-                        .Replacement.Text = Right(Trim([ReplacementData]), Len(Trim([ReplacementData])) - InStr(1, [ReplacementData], " "))
-                        .Replacement.Font.Underline = wdUnderlineSingle
-                        .Execute Replace:=wdReplaceAll
-                    End If
-           
-                End With
-                On Error Resume Next
-                If rngStory.ShapeRange.Count > 0 Then
-                    For Each oShp In rngStory.ShapeRange
-                        If oShp.TextFrame.HasText Then
-                            With oShp.TextFrame.TextRange.Find
-                                .ClearFormatting
-                                .Replacement.ClearFormatting
-                                .Text = "<<" & FindData & ">>"
-                                .Replacement.Text = ReplacementData
-                                .Execute Replace:=wdReplaceAll
-                            End With
-                        End If
-                    Next
-                End If
-                On Error GoTo 0
-                'Get next linked story (if any)
-                Set rngStory = rngStory.NextStoryRange
-            Loop Until rngStory Is Nothing
-        Next
-  
-   
-Else        'just underline the merging field     7/27/17
-
-        For Each rngStory In WordDocument.StoryRanges
-            'Iterate through all linked stories
-            Do
-                With rngStory.Find
-                    .ClearFormatting
-                    .Replacement.ClearFormatting
-                    .Text = "<<" & FindData & ">>"
-'                    .Replacement.Text = Replace([ReplacementData], ":", "")
-                    .Replacement.Text = ReplacementData
-                    .Replacement.Font.Underline = wdUnderlineSingle
-                    .Execute Replace:=wdReplaceAll
-                End With
-                On Error Resume Next
-                If rngStory.ShapeRange.Count > 0 Then
-                    For Each oShp In rngStory.ShapeRange
-                        If oShp.TextFrame.HasText Then
-                            With oShp.TextFrame.TextRange.Find
-                                .ClearFormatting
-                                .Replacement.ClearFormatting
-                                .Text = "<<" & FindData & ">>"
-                                .Replacement.Text = ReplacementData
-                                .Replacement.Font.Underline = wdUnderlineSingle
-                                .Execute Replace:=wdReplaceAll
-                            End With
-                        End If
-                    Next
-                End If
-                On Error GoTo 0
-                'Get next linked story (if any)
-                Set rngStory = rngStory.NextStoryRange
-            Loop Until rngStory Is Nothing
-        Next
-End If
-
-Return
-End Sub
-
-Private Sub FillFieldUnderline(WordDocument As Word.Document, FieldName As String, Replacement As String)
-Dim rngStory As Word.Range
-Dim arryReplacement() As String
-Dim allNames As String
-Dim i, N, j As Integer
-Dim rsCompany As Recordset
-Dim bCompany As Boolean
-
-Set rsCompany = CurrentDb.OpenRecordset("Select Company, First, Last, AKA from Names where Mortgagor = true and FileNumber = " & Forms![case list]!FileNumber, dbOpenSnapshot)
-rsCompany.MoveLast
-N = rsCompany.RecordCount
-rsCompany.MoveFirst
-  
-For Each rngStory In WordDocument.StoryRanges
-    With rngStory.Find
-                    .ClearFormatting
-                    .Replacement.ClearFormatting
-                    .Text = "<<" & FieldName & ">>"
-                     For j = 1 To N
-                       If Not IsNull(rsCompany!Company) Then
-                            allNames = allNames & rsCompany!Company & "CName" & ", "
-                       Else
-                            allNames = allNames & rsCompany!First & " " & rsCompany!Last & Nz(rsCompany!AKA, "") & ", "
-                       End If
-                       rsCompany.MoveNext
-'                       j = j + 1
-                      Next
-                    allNames = Replace(allNames, "and", ",")
-                    allNames = Left(Trim(allNames), Len(Trim(allNames)) - 1)
-                    .Replacement.Text = Replace(Trim(allNames), "CName", "")
-                    .Execute Replace:=wdReplaceAll
-              
-                    arryReplacement = Split(allNames, ",")
-'                    .Replacement.Text = arryReplacement()
-                    
-                    For i = 0 To UBound(arryReplacement)
-                     
-                      If Right(arryReplacement(i), 5) <> "CName" Then  'underline the Last name
-                              If InStr(arryReplacement(i), "AKA") > 0 Or InStr(arryReplacement(i), "nka") > 0 Then
-                                If InStr(arryReplacement(i), "AKA") > 0 Then
-                                    allNames = Trim(Left(arryReplacement(i), InStr(arryReplacement(i), "aka") - 2))
-                                Else
-                                    allNames = Trim(Left(arryReplacement(i), InStr(arryReplacement(i), "nka") - 2))
-                                End If
-                                
-                                allNames = Replace(allNames, Left(allNames, InStrRev(allNames, " ")), "")       'Get the Last name
-                                .Text = allNames & " "    'underline only the last name  before nka, the same last name after nka is excluded.  OMG! Mei
-                                .Replacement.Text = allNames & " "
-                                .Replacement.Font.Underline = wdUnderlineSingle
-                                .Execute Replace:=wdReplaceAll
-        '                        .Text = " nk"
-        '                        .Replacement.ClearFormatting
-        '                        .Replacement.Text = " nk"
-        '                        .Execute Replace:=wdReplaceAll
-                              Else
-                                .Text = Right(Trim(arryReplacement(i)), Len(Trim(arryReplacement(i))) - InStrRev(Trim(arryReplacement(i)), " "))
-                                .Replacement.Text = Right(Trim(arryReplacement(i)), Len(Trim(arryReplacement(i))) - InStrRev(Trim(arryReplacement(i)), " "))
-                                .Replacement.Font.Underline = wdUnderlineSingle
-                                .Execute Replace:=wdReplaceAll
-                             End If
-                      End If
-                    Next
-                
-    End With
-    Exit For
-Next
-    
-End Sub
-
-Private Sub SaveDoc(WordDoc As Word.Document, FileNumber As Long, filename As String)
-Dim Filespec As String
-
-Filespec = DocLocation & DocBucket(FileNumber) & "\" & FileNumber & "\" & filename
-Do Until Dir$(Filespec) = ""
-    filename = InputBox$(filename & " already exists, please enter another name:", , filename)
-    If Len(filename) > 0 Then
-        If UCase$(Right$(filename, 4)) <> ".DOC" Then filename = filename & ".doc"
-        Filespec = DocLocation & DocBucket(FileNumber) & "\" & FileNumber & "\" & filename
-    Else
-        Exit Sub
-    End If
-Loop
-WordDoc.SaveAs Filespec
-
-End Sub
-
-Private Sub SaveDocNew(WordDoc As Word.Document, FileNumber As Long, filename As String)
-Dim Filespec As String
-
-Filespec = DocLocation & DocBucket(FileNumber) & "\" & FileNumber & "\" & filename
-
-If Dir$(DocLocation & DocBucket(FileNumber) & "\" & FileNumber & "\" & filename) <> "" Then
-            MsgBox FileNumber & " already exists.", vbCritical
-            Exit Sub
-End If
-
-WordDoc.SaveAs Filespec
-
-End Sub
-Private Sub UploadWordDoc(FileNumber As Long, filename As String)
-Dim selecteddoctype As Long
-Dim DocDate As Date
-Dim strsql As String
-Dim strSQLValues As String
-        
-strsql = ""
-strSQLValues = ""
-DocDate = Now
-selecteddoctype = 0
-
-DoCmd.SetWarnings False
-               
-'    strSQLValues = FileNumber & "," & selecteddoctype & ",'" & "" & "'," & GetStaffID() & ",'" & DocDate & "','" & Replace(Filename, "'", "''") & "','" & Replace(newfilename, "'", "''") & "'," & 1
-'    strsql = "Insert Into DocIndex (FileNumber,DocTitleID,DocGroup,StaffID,DateStamp,Filespec,Notes,Doctype) VALUES (" & strSQLValues & ")"
-
-    strSQLValues = FileNumber & "," & selecteddoctype & ",'" & "" & "'," & GetStaffID() & ",'" & DocDate & "','" & Replace(filename, "'", "''") & "','" & Replace(filename, "'", "''") & "'"
-    strsql = "Insert Into DocIndex (FileNumber,DocTitleID,DocGroup,StaffID,DateStamp,Filespec,Notes) VALUES (" & strSQLValues & ")"
-    DoCmd.RunSQL (strsql)
-    
-    strsql = ""
-    strsql = "Insert Into DocumentSuport (DocName,FormatID) VALUES ('" & filename & "' , 1)"
-    
-    DoCmd.RunSQL (strsql)
-        
-    DoCmd.SetWarnings True
-End Sub
-
-Public Sub OpenFrm(Doc As String, PrintTo As Integer)
-    DoCmd.OpenForm "GetDocType", , , , , acDialog, Doc & "|" & PrintTo & "|0"
-End Sub
-
-Public Sub Doc_OwnershipAffidavitMDHC(KeepOpen As Boolean)
-
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Set WordObj = CreateObject("Word.Application")
-
-Call OpenDocAsSaved("Note Ownership Affidavit MDHC")
-
-Set WordDoc = WordObj.Documents.Open(EMailPath & "Note Ownership Affidavit MDHC", False)
-WordObj.Visible = True
-
-WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
-WordDoc.Bookmarks("FileNumber").Range.Text = d![CaseList.FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
-
-FillField WordDoc, "UpperJurisdiction", UCase$(d!Jurisdiction & ", " & d!LongState)
-FillField WordDoc, "LoanNumber", d!LoanNumber
-FillField WordDoc, "Investor", d!Investor
-FillField WordDoc, "Investor2", IIf(d![ClientID] = 385, d![Investor2], d![Investor])
-FillField WordDoc, "TrusteeNames", trusteeNames(0, 3, , vbCr)
-FillField WordDoc, "FirmShortAddress", FirmShortAddress(vbCr)
-FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-FillField WordDoc, "MortgagorNames", MortgagorNames(0, 3, vbCr)
-FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
-FillField WordDoc, "City", d!City
-FillField WordDoc, "State", d![FCdetails.State]
-FillField WordDoc, "Zip", FormatZip(d!ZipCode)
-FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber)
-FillField WordDoc, "NoteOwner", FetchNoteOwner(d!LoanType, IIf(d![ClientID] = 385, d![Investor2], d![Investor]), d![FCdetails.State])
-FillField WordDoc, "Noteholders", GetNamesMD(0, 2, "Noteholder=True")
-FillField WordDoc, "OriginalPBal", Format$(d!OriginalPBal, "Currency")
-FillField WordDoc, "DOTDate", Format$(d!DOTdate, "mmmm d, yyyy")
-FillField WordDoc, "InvestorAIF", IIf(d!AIF = True, d!LongClientName & " as Attorney in Fact for ", "") & d!Investor
-FillField WordDoc, "InvestorName", (Split(ReportArgs, "|")(0))
-FillField WordDoc, "InvestorTitle", (Split(ReportArgs, "|")(1))
-FillField WordDoc, "NotaryLocation", FetchNotaryLocation(Forms!foreclosurePrint!NotaryID)
-FillField WordDoc, "FHLMCWording", IIf(d!LoanType = 5 Or d!LoanType = 4, ", and " & IIf(d![ClientID] = 385, d![Investor2], d![Investor]) & " is the holder of the Note having been transferred to " & IIf(d![ClientID] = 385, d![Investor2], d![Investor]) & " for the purposes of enforcement and conducting this foreclosure action", "")
-FillField WordDoc, "NotaryNameSignLine", FetchNotaryName(Forms!foreclosurePrint!NotaryID, True)
-FillField WordDoc, "Barcode", AddDocPreIndex(d![CaseList.FileNumber], 464, "")
-FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ____________________", "")
-FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ____________________", "")
-FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: __________________", "")
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Note Ownership Affidavit MDHC.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Note Ownership Affidavit MDHC.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-
-Public Sub Doc_StatementOfDebtWithFiguresOcwen(KeepOpen As Boolean)
-
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset, dd As Recordset      ' data
-Dim i As Integer, itemcount As Integer, TotalItems As Currency, itemsFields As String
-Dim InterestFrom As String
-Dim InterestTo As String
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Dim templateName As String
-templateName = "Statement of Debt Figures Ocwen"
-templateName = templateName '& ".doc"
-
-InterestFrom = InputBox("Interest From")
-InterestTo = InputBox("Interest To")
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-
-WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
-WordDoc.Bookmarks("FileNumber").Range.Text = d![CaseList.FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress]
-WordDoc.Bookmarks("APTNum").Select
-WordDoc.Bookmarks("APTNum").Range.Text = Nz(d![Fair Debt])
-
-WordObj.Visible = False
-If MsgBox("Is There A Loan Mod? ", vbYesNo) = vbYes Then
-FillField WordDoc, "Mod", ", MODIFIED by Agreement effective " & Format(InputBox(" Effective Date?   Format mm/dd/yyyy"), "mmmm d, yyyy") & " with an amended principal balance of " & Format(InputBox(" Amended Principal Balance? "), "Currency")
-Else
-FillField WordDoc, "Mod", ""
-End If
-WordObj.Visible = True
-
-FillField WordDoc, "UpperJurisdiction", UCase$(d!Jurisdiction & ", " & d!LongState)
-FillField WordDoc, "LoanNumber", d!LoanNumber
-
-FillField WordDoc, "Investor", IIf(d![AIF] = True, d![LongClientName] & " as Attorney in Fact for ", "") & d!Investor
-
-FillField WordDoc, "TrusteeNames", trusteeNames(0, 3, , vbCr)
-FillField WordDoc, "FirmShortAddress", IIf(d!CaseTypeID = 8, d!MonitorTrusteeAddress, FirmShortAddress(vbCr))
-FillField WordDoc, "Jurisdiction", d!Jurisdiction
-FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-FillField WordDoc, "MortgagorNames", MortgagorNames(0, 3, vbCr)
-FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
-FillField WordDoc, "City", d!City
-FillField WordDoc, "State", d![FCdetails.State]
-FillField WordDoc, "Zip", FormatZip(d!ZipCode)
-FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber)
-'FillField WordDoc, "455Only", IIf(D![ClientID] = 455, ", and continuing each month thereafter with probable future advancements made by the mortgagee, and that the Plaintiff(s) has\have the right to foreclose;", ", and continuing each month thereafter, and that the Plaintiff(s) has\have the right to foreclose;")
-FillField WordDoc, "Liber", d![Liber]
-FillField WordDoc, "Folio", d![Folio]
-FillField WordDoc, "LPIdate", Format$(d![LPIDate], "mmmm d, yyyy")
-FillField WordDoc, "LPIdate+1", Format$(d![LPIDate] + 1, "mmmm d, yyyy")
-FillField WordDoc, "OriginalPBal", Format$(d!OriginalPBal, "Currency")
-'FillField WordDoc, "PaidStr", IIf((Nz(D![RemainingPBal], 0) > Nz(D![OriginalPBal], 0)), "Additional Interest", "Paid on principal")
-'FillField WordDoc, "Paid", Format$(D!OriginalPBal - D!RemainingPBal, "Currency")
-FillField WordDoc, "RemainingPBal", Format$(d!RemainingPBal, "Currency")
-FillField WordDoc, "Barcode", AddDocPreIndex(d![CaseList.FileNumber], 223, "")
-'FillField WordDoc, "diem", IIf(D![LoanType] = 3, IIf(D![ClientID] <> 531, "Per Monthly Interest: ", "Per Diem Interest: "), "Per Diem Interest: ")
-'FillField WordDoc, "txtbalanc", IIf(D![ClientID] = 361, "Unpaid Principal Balance", "Remaining Balance Due")
-FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
-FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
-FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
-
-TotalItems = 0
-itemsFields = ""
-
-Set dd = CurrentDb.OpenRecordset("SELECT Desc, Amount FROM StatementOfDebt WHERE FileNumber=" & d![CaseList.FileNumber] & " ORDER BY StatementOfDebt.Sort_Desc DESC;", dbOpenSnapshot)
-If dd.EOF Then      ' no extra lines  'More like Not an empty recordset you mean
-    FillField WordDoc, "Line_Items", ""
-Else
-    dd.MoveLast
-    itemcount = dd.RecordCount
-    ' Make enough lines
-    For i = 1 To itemcount
-        itemsFields = itemsFields & "<<Item" & i & ">>" & vbCr
-    Next i
-    itemsFields = Left$(itemsFields, Len(itemsFields) - 1) ' remove trailing CR
-    FillField WordDoc, "Line_Items", itemsFields
-    dd.MoveFirst
-    i = 1
-    Do While Not dd.EOF
-        FillField WordDoc, "Item" & i, IIf(dd!Desc = "Interest", "Interest at " & Format$(Forms![Print Statement of Debt]!InterestRate, "#0.000%") & " for " & [InterestFrom] & " to " & [InterestTo] & vbTab & Format$(Nz(dd!Amount, 0), "Currency"), dd!Desc & vbTab & Format$(Nz(dd!Amount, 0), "Currency"))
-        'FillField WordDoc, "Item" & i, dd!Desc & vbTab & Format$(Nz(dd!Amount, 0), "Currency")
-        TotalItems = TotalItems + Nz(dd!Amount, 0)
-        dd.MoveNext
-        i = i + 1
-       
-    Loop
-End If
-dd.Close
-
-FillField WordDoc, "BalDueDate", IIf(IsNull([Forms]![Print Statement of Debt]![txtDueDate]), "______________", Format$([Forms]![Print Statement of Debt]![txtDueDate], "mmmm d"", ""yyyy"))
-FillField WordDoc, "BalanceDue", Format$(d!RemainingPBal + TotalItems, "Currency")
-FillField WordDoc, "PerDiemInterest", IIf(IsNull(d!PerDiem), "$_____________", Format$(d!PerDiem, "Currency"))
-FillField WordDoc, "InterestRate", IIf(IsNull(d!InterestRate), "____________ %", Format(d!InterestRate, "#0.000") & "%")
-FillField WordDoc, "InvestorName", (Split(ReportArgs, "|")(0))
-FillField WordDoc, "InvestorTitle", (Split(ReportArgs, "|")(1))
-FillField WordDoc, "NotaryLocation", IIf(IsNull(d!NotaryLocation), "STATE OF ______________:" & vbCr & "COUNTY OF ____________ :", d!NotaryLocation)
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Statement of Debt with Figures Ocwen.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Statement of Debt with Figures Ocwen.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-
-Public Sub Doc_Ad_MD(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved("Ad MD")
-Set WordDoc = WordObj.Documents.Open(EMailPath & "Ad MD", False)
-WordObj.Visible = True
-
-'FillField WordDoc, "firmAdd", FirmAddress()
-
-If IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Or [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Then
-        FillField WordDoc, "FirmAdd", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-                 DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Then
-        FillField WordDoc, "FirmAdd", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-                 DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then
-        FillField WordDoc, "FirmAdd", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-                  DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID =2")
-End If
-FillField WordDoc, "firmPhone", FirmPhone()
-FillField WordDoc, "TrusteeWord", UCase$(TrusteeWord(d![CaseList.FileNumber], 0))
-FillField WordDoc, "Property", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & vbCr & d!City & ", " & d![FCdetails.State] & ", " & FormatZip(d!ZipCode)
-FillField WordDoc, "Mortgagors", IIf(IsNull(d!OriginalMortgagors), MortgagorNames(d![CaseList.FileNumber], 2), d!OriginalMortgagors & " assumed by " & MortgagorNames(d![CaseList.FileNumber], 2))
-FillField WordDoc, "DOTDate", Format$(d!DOTdate, "mmmm d, yyyy")
-FillField WordDoc, "LiberFolio", LiberFolio(d!Liber, d!Folio, d![FCdetails.State])
-FillField WordDoc, "Jurisdiction", d!Jurisdiction & ", " & d![FCdetails.State]
-FillField WordDoc, "SaleLocation", d!SaleLocation
-FillField WordDoc, "SaleDate", Format$(d!Sale, "mmmm d, yyyy")
-FillField WordDoc, "SaleTime", Format$(d!SaleTime, "h:nn AM/PM")
-FillField WordDoc, "Ownership", IIf(d!Leasehold = 1, "LEASEHOLD", "FEE-SIMPLE")
-FillField WordDoc, "GroundRent", IIf(d!Leasehold = 1, "subject to annual ground rent of " & Format$(d!GroundRentAmount, "Currency") & ", payable " & d!GroundRentPayable & ", ", "")
-FillField WordDoc, "DOTWord", DOTWord(d!DOT)
-FillField WordDoc, "PriorLien", IIf(d!LienPosition <= 1, "", "          The property will be sold subject to a prior mortgage, the amount to be announced at the time of sale." & vbCr)
-FillField WordDoc, "IRSLiens", IIf(d!IRSLiens, "The property will be sold subject to a 120 day right of redemption by the Internal Revenue Service.  ", "")
-FillField WordDoc, "Deposit", Format$(d!Deposit, "Currency")
-FillField WordDoc, "Trustees", trusteeNames(d![CaseList.FileNumber], 2)
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Ad MD.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Ad MD.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-Public Sub doc_SOTAffidavitMD(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qrySOTAffFCDocsLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved("SOT Affidavit MD")
-Set WordDoc = WordObj.Documents.Open(EMailPath & "SOT Affidavit MD.doc", False)
-WordObj.Visible = True
-
-WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
-WordDoc.Bookmarks("FileNumber").Range.Text = d![CaseList.FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName] '& vbct StopBySarab
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), " ", ", " & d![Fair Debt] & ", ") & d!City & ", " & d![FCdetails.State] & " " & Format(d!ZipCode)
-
-    If [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Or IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Then   'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-    End If
-
-FillField WordDoc, "UpperJurisdiction", UCase$(d![Jurisdiction] & ", " & d![LongState])
-FillField WordDoc, "CourtCaseNumber", IIf(IsNull(d!CourtCaseNumber), "", d!CourtCaseNumber)
-FillField WordDoc, "TrusteeNames", trusteeNames(0, 3)
-'FillField WordDoc, "FirmShortAddress", FirmShortAddress()
-FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-FillField WordDoc, "MortgagorNames", MortgagorNames(0, 3)
-FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(IsNull(d![Fair Debt]), "", ", " & d![Fair Debt])
-FillField WordDoc, "City", d!City
-FillField WordDoc, "State", d![FCdetails.State]
-FillField WordDoc, "Zip", FormatZip(d!ZipCode)
-FillField WordDoc, "TrusteeNames2", trusteeNamesCPTF(0, 3) & TrusteeWord(0, 0)
-FillField WordDoc, "firmAddress", IIf((IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Or [Forms]![foreclosurePrint]![cboOfficeLocation] = 1), FirmAddress(), _
-                IIf([Forms]![foreclosurePrint]![cboOfficeLocation] = 2, FirmAddressVA(), DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-                                DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")))
-FillField WordDoc, "firmphone", IIf((IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Or [Forms]![foreclosurePrint]![cboOfficeLocation] = 1), FirmPhone(), FirmPhoneVA())
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "SOT Affidavit MD.doc.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "SOT Affidavit MD.doc.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-Public Sub Doc_Ad_VA(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved("Ad VA_New")
-Set WordDoc = WordObj.Documents.Open(EMailPath & "Ad VA_New.doc", False)
-WordObj.Visible = True
-
-If IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Or [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Then
-        FillField WordDoc, "FirmAddr", "Rosenberg & Associates, LLC" & vbCr & "(Attorney for the Secured Party)" & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-                 DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Then
-        FillField WordDoc, "FirmAddr", DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-                 DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then
-        FillField WordDoc, "FirmAddr", DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-                  DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-End If
-
-FillField WordDoc, "Property", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & ", " & d!City & ", " & d![FCdetails.State] & " " & FormatZip(d!ZipCode)
-FillField WordDoc, "DOTWord", DOTWord(d!DOT)
-FillField WordDoc, "DOTDate", Format$(d!DOTdate, "mmmm d, yyyy")
-FillField WordDoc, "LiberFolio", LiberFolio(d!Liber, d!Folio, d![FCdetails.State])
-FillField WordDoc, "Req", IIf(IsNull(d![Rerecorded]), "", " and re-recorded at " & LiberFolio(d!Liber2, d!Folio2, d![FCdetails.State], 0, 1) & ",") & IIf(IsNull(d![LoanMod]), "", " and a Loan Modification recorded on " & Format$(d![LoanModRecorded], "mmmm d, yyyy") & " " & LiberFolio(d![LiberLoanMod], d![FolioLoanMod], d![FCdetails.State], 0, 0, 1) & ",")
-'FillField WordDoc, "Mod",
-FillField WordDoc, "Jurisdiction", d!Jurisdiction & ", " & d![FCdetails.State]
-FillField WordDoc, "OriginalBalance", Format$(d!OriginalPBal, "Currency")
-FillField WordDoc, "TrusteeWord", UCase$(TrusteeWord(d![CaseList.FileNumber], 0))
-FillField WordDoc, "Trustees", trusteeNames(d![CaseList.FileNumber], 2)
-FillField WordDoc, "SaleLocation", Nz(d!SaleLocation)
-FillField WordDoc, "SaleDate", Format$(d!Sale, "mmmm d, yyyy")
-FillField WordDoc, "SaleTime", Format$(d!SaleTime, "h:nn AM/PM")
-FillField WordDoc, "ShortLegal", IIf(d![UseFullLegal] = True, d![LegalDescription], d![ShortLegal])
-FillField WordDoc, "PriorLien", IIf(d!LienPosition <= 1, "", "The property will be sold subject to " & IIf(d!LienPosition = 2, "a prior mortgage, the amount", "prior mortgages, the amounts") & " to be announced at the time of sale." & vbCr)
-FillField WordDoc, "IRSLiens", IIf(d!IRSLiens, "The property will be sold subject to a 120 day right of redemption by the Internal Revenue Service.  ", "")
-FillField WordDoc, "Deposit", Format$(d!Deposit, "Currency")
-FillField WordDoc, "Contact", DLookup("sValue", "DB", "Name='ContactPhone'")
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Ad VA.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Ad VA.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-
-Public Sub Doc_Ad_DC(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Set WordObj = CreateObject("Word.Application")
-'Set WordDoc = WordObj.Documents.Open(EMailPath & "Ad DC.doc", False)
-Call OpenDocAsSaved("DC Sale ad")
-Set WordDoc = WordObj.Documents.Open(EMailPath & "DC Sale ad.doc", False)
-WordObj.Visible = True
-
-FillField WordDoc, "CourtCaseNumber", d!CourtCaseNumber
-FillField WordDoc, "LegalDescription", d!LegalDescription
-FillField WordDoc, "TrusteeWord", UCase$(TrusteeWord(d![CaseList.FileNumber], 0))
-FillField WordDoc, "VendorAddr", DLookup("StreetAddress", "Vendors", "ID=222") & vbCr & DLookup("City", "Vendors", "ID=222") & ", " & DLookup("State", "Vendors", "ID=222") & " " & DLookup("Zipcode", "Vendors", "ID=222") & _
-                " " & DLookup("PhoneNum", "Vendors", "ID=222")
-FillField WordDoc, "SaleLocation", d!SaleLocation
-FillField WordDoc, "VendorPh", DLookup("PhoneNum", "Vendors", "ID=222")
-FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & ", " & d!City & ", " & d![FCdetails.State] & ", " & FormatZip(d!ZipCode)
-'FillField WordDoc, "DOTRecorded", Format$(d!DOTrecorded, "mmmm d, yyyy")
-FillField WordDoc, "DoTDate", Format$(d!DOTdate, "mmmm d, yyyy")
-FillField WordDoc, "Liber", d!Liber
-'FillField WordDoc, "Docket", Format$(d!Docket, "mmmm d, yyyy")
-FillField WordDoc, "SaleDate", Format$(d!Sale, "dddd, mmmm d, yyyy")
-FillField WordDoc, "SaleTime", Format$(d!SaleTime, "h:nn AM/PM")
-'FillField WordDoc, "TaxID", d!TaxID
-'FillField WordDoc, "IRSLiens", IIf(d!IRSLiens, "The property will be sold subject to a 120 day right of redemption by the Internal Revenue Service.  ", "")
-'FillField WordDoc, "PriorLien", IIf(d!LienPosition <= 1, "", "The property will be sold subject to a prior mortgage, the amount to be announced at the time of sale.  ")
-FillField WordDoc, "Deposit", Format$(d!Deposit, "Currency")
-FillField WordDoc, "TrusteeName", trusteeNames(d![CaseList.FileNumber], 2)
-FillField WordDoc, "Month", Format(Date, "mmmm")
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Ad DC.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Ad DC.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
- Public Sub doc_SCRANotice90Day(KeepOpen As Boolean)
- 
- Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
- Set WordObj = CreateObject("Word.Application")
- Call OpenDocAsSaved("SCRA NOTICE 90-Day")
- 'Set WordDoc = WordObj.Documents.Open(EMailPath & "SCRA NOTICE 90-Day.doc", False)
- Set WordDoc = WordObj.Documents.Open(EMailPath & "SCRA NOTICE 90-Day.doc", False)
-
- WordObj.Visible = True
- 
- FillField WordDoc, "loginName", GetLoginName()
- End Sub
-
-Public Sub Doc_DebtDispute(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryRptDebtDisputeWrd WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "There's no record for this file."
-    Exit Sub
-End If
-
-Dim templateName As String
-templateName = "Debt Dispute Timely"
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-
-FillField WordDoc, "date", Format(Date, "mmmm dd, yyyy")
-FillField WordDoc, "Requestor", [Forms]![frmDebtDispute]![txtRequestor]
-FillField WordDoc, "RequestorAddr", [Forms]![frmDebtDispute]![txtrequestorAddr]
-FillField WordDoc, "PrimaryName", [Forms]![ForeclosureDetails]![PrimaryFirstName] & " " & [Forms]![ForeclosureDetails]![PrimaryLastName] & IIf(Not IsNull([Forms]![ForeclosureDetails]![SecondaryFirstName]), vbCr & [Forms]![ForeclosureDetails]![SecondaryFirstName] & " " & [Forms]![ForeclosureDetails]![SecondaryLastName], "")
-FillField WordDoc, "PropertyAddress", d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), "", d![Fair Debt]) & vbCr & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
-FillField WordDoc, "LoanNo", d!LoanNumber
-FillField WordDoc, "FileNumber", d!FileNumber
-FillField WordDoc, "Doc", IIf([Forms]![frmDebtDispute]![frameDoc] = 1, "Promissory Note", IIf([Forms]![frmDebtDispute]![frameDoc] = 2, "Deed of Trust", "Promissory Note and Deed of Trust"))
-FillField WordDoc, "Client", d!LongClientName
-FillField WordDoc, "Investor", d!Investor
-FillField WordDoc, "OrigBeneficiary", Nz(d!OriginalBeneficiary, "___________________")
-FillField WordDoc, "BeneficiaryAddr", [Forms]![frmDebtDispute]![txtOrigBenefAddr]
-FillField WordDoc, "LosMitPhone", Nz(d!LossMitPhone, "___________________")
-
-
-WordObj.Selection.HomeKey wdStory, wdMove
-Set WordObj = Nothing
-d.Close
-End Sub
-
-Public Sub Doc_DebtDisputeUntime(KeepOpen As Boolean)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryRptDebtDisputeWrd WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "There's no record for this file."
-    Exit Sub
-End If
-
-Dim templateName As String
-templateName = "Debt Dispute UnTimely"
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-
-FillField WordDoc, "date", Format(Date, "mmmm dd, yyyy")
-FillField WordDoc, "Requestor", [Forms]![frmDebtDispute]![txtRequestor]
-FillField WordDoc, "RequestorAddr", [Forms]![frmDebtDispute]![txtrequestorAddr]
-FillField WordDoc, "PrimaryName", [Forms]![ForeclosureDetails]![PrimaryFirstName] & " " & [Forms]![ForeclosureDetails]![PrimaryLastName] & IIf(Not IsNull([Forms]![ForeclosureDetails]![SecondaryFirstName]), vbCr & [Forms]![ForeclosureDetails]![SecondaryFirstName] & " " & [Forms]![ForeclosureDetails]![SecondaryLastName], "")
-FillField WordDoc, "PropertyAddress", d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), "", d![Fair Debt]) & vbCr & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
-FillField WordDoc, "LoanNo", d!LoanNumber
-FillField WordDoc, "FileNumber", d!FileNumber
-FillField WordDoc, "Doc", IIf([Forms]![frmDebtDispute]![frameDoc] = 1, "Promissory Note", IIf([Forms]![frmDebtDispute]![frameDoc] = 2, "Deed of Trust", "Promissory Note and Deed of Trust"))
-FillField WordDoc, "Client", d!LongClientName
-FillField WordDoc, "Investor", d!Investor
-FillField WordDoc, "OrigBeneficiary", d!OriginalBeneficiary
-FillField WordDoc, "BeneficiaryAddr", [Forms]![frmDebtDispute]![txtOrigBenefAddr]
-FillField WordDoc, "LosMitPhone", d!LossMitPhone
-
-
-WordObj.Selection.HomeKey wdStory, wdMove
-Set WordObj = Nothing
-d.Close
-End Sub
-
-Public Sub Doc_Declaration(KeepOpen As Boolean) ' 02/05/16
-
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d, sd1, sd2 As Recordset
-Dim itemsFields As String, i, j, itemcount As Integer, TotalItems1, TotalItems2, Tamount As Currency
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryRptDeclarationWord WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-Set sd1 = CurrentDb.OpenRecordset("SELECT * FROM FailedPayment where FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-Set sd2 = CurrentDb.OpenRecordset("SELECT * FROM PostPetitionPayments WHERE FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-If sd1.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers in sd1"
-    Exit Sub
-End If
-
-If sd2.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers in sd2"
-    Exit Sub
-End If
-
-Dim templateName As String
-templateName = "Declaration" ' & ".doc"
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-
-WordDoc.Bookmarks("FileNumber").Select
-WordDoc.Bookmarks("FileNumber").Range.Text = d![FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress]
-WordDoc.Bookmarks("APTNum").Select
-WordDoc.Bookmarks("APTNum").Range.Text = Nz(d![Fair Debt])
-
-'margin address:
-    If [Forms]![BankruptcyPrint]![cboOfficeLocation] = 2 Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-    ElseIf [Forms]![BankruptcyPrint]![cboOfficeLocation] = 1 Or IsNull([Forms]![BankruptcyPrint]![cboOfficeLocation]) Then   'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-    ElseIf [Forms]![BankruptcyPrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-    End If
-
- FillField WordDoc, "DistrictName", UCase$(d![Name])
- FillField WordDoc, "DistrictsLocation", d![Location]
- FillField WordDoc, "DebtorNames", UCase$(DebtorNames(0, 3))
- FillField WordDoc, "plural", IIf(CountNames(d![FileNumber], "BKDebtor = True And (BKOwner=True Or BKMortgagor=True)") > 1, "s", "")
- FillField WordDoc, "CourtCaseNumber", d!CaseNo
- FillField WordDoc, "BKchapter", Nz(d![BKdetails.Chapter])
- FillField WordDoc, "Investor", UCase$(d![Investor])
- FillField WordDoc, "InvestorAdd", d!InvestorAddress
- FillField WordDoc, "Address", GetAddresses(0, 4, IIf(d![BKdetails.Chapter] = 13, "(BKDebtor=True OR BKCoDebtor=True) AND (BKOwner=True OR BKMortgagor=True)", "BKDebtor=True AND (BKOwner=True OR BKMortgagor=True)")) _
-        & IIf(d![BKdetails.Chapter] = 7, vbCr & vbCr & "and" & vbNewLine & vbNewLine & FormatName("", UCase$(Nz(d![First])), UCase$(Nz(d![Last])), ", CHAPTER 7 TRUSTEE", d![Address], d![Address2], d![BKTrustees.City], d![BKTrustees.State], d![Zip]), "")
- FillField WordDoc, "DeclarationName", IIf(IsNull([Forms]![Print Declaration].[NameI]), "____________________", [Forms]![Print Declaration].[NameI])
- FillField WordDoc, "DeclarationTitle", IIf(IsNull([Forms]![Print Declaration].[TitleI]), "____________________", [Forms]![Print Declaration].[TitleI])
- FillField WordDoc, "Investor", Nz(d!Investor)
- FillField WordDoc, "BorrowersNames", BrowersNamesBK(d![FileNumber], 2, "Borrower=True")
- FillField WordDoc, "DOTDate", Format$(d![DOTdate], "mmmm dd"", ""yyyy")
- FillField WordDoc, "OriginalBeneficiary", Nz(d![OriginalBeneficiary])
- FillField WordDoc, "OriginalPBal", Format$(d![OriginalPBal], "Currency")
- FillField WordDoc, "PropertyAddress", d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), " ", ", " & d![Fair Debt] & ", ") & d![FCdetails.City] & ", " & d![FCdetails.State] & " " & FormatZip(d![ZipCode])
- FillField WordDoc, "endorsed", Nz([Forms]![Print Declaration]![Endorsed])
- FillField WordDoc, "AsOfDate", Format$(d![AsOfDate], "mmmm dd"", ""yyyy")
- FillField WordDoc, "RemainingPBal", Format(d![RemainingPBal], "Currency")
- 'FillField WordDoc, "TotFailedPetitionPay", Format(([FailedPaymentSub].[Report].[TotalFialdPayment] + [PostPetitionPaymentsSub].[Report].[TotalPostPetition]), "Currency")
- 'FillField WordDoc, "FailedPayment", Format([FailedPaymentSub].[Report].[TotalFialdPayment],"Currency")
- FillField WordDoc, "Paragrph11", IIf((Not IsNull([Forms]![Print Declaration].[TxtExhibit]) Or [Forms]![Print Declaration]![chExhibit]), "11. Attached hereto as Exhibit " & [Forms]![Print Declaration]![TxtExhibit] & " is a postpetition payment history.", "")
-
-' If sd1.EOF Then      ' no extra lines
-'    FillField WordDoc, "NumMissed", ""
-'Else
-    sd1.MoveLast
-    itemcount = sd1.RecordCount
-    ' Make enough lines
-    For i = 1 To itemcount
-        itemsFields = itemsFields & "<<Item" & i & ">>" & vbCr
-    Next i
-    itemsFields = Left$(itemsFields, Len(itemsFields) - 1) ' remove trailing CR
-    FillField WordDoc, "NumMissed", itemsFields
-    sd1.MoveFirst
-    i = 1
-    Do While Not sd1.EOF
-        FillField WordDoc, "Item" & i, sd1!NumMissed & vbTab & sd1!FromD & vbTab & sd1!ToD & vbTab & Format$(sd1!PandI, "currency") & vbTab & _
-            Format$(sd1!Escrow, "Currency") & vbTab & Format$(sd1!MontlyP, "Currency") & vbTab & Format$(sd1!TotalP, "Currency") & vbNewLine _
-            & "________________________________________________________________________________"
-        TotalItems1 = TotalItems1 + Nz(sd1!TotalP, 0)
-        sd1.MoveNext
-        i = i + 1
-    Loop
-    FillField WordDoc, "tamt", Format$(TotalItems1, "currency")
-    FillField WordDoc, "balance", "(" & Format([Forms]![BankruptcyDetails]![sfrmFailedPayment].[Form]![sfrmSusbandBalance].[Form]![SusBalancee], "Currency") & ")"
-'End If
-
-    itemcount = 0
-    itemsFields = ""
-    
-    sd2.MoveLast
-    itemcount = sd2.RecordCount
-        For j = 1 To itemcount
-        itemsFields = itemsFields & "<<Item" & j & ">>" & vbCr
-    Next j
-    itemsFields = Left$(itemsFields, Len(itemsFields) - 1) ' remove trailing CR
-    FillField WordDoc, "Desc", itemsFields
-    
-    sd2.MoveFirst
-    j = 1
-    Do While Not sd2.EOF
-        FillField WordDoc, "item" & j, vbTab & Format$(sd2!Descrip, "currency") & vbTab & Format$(sd2!Amount, "Currency") & vbNewLine & _
-            "________________________________________________________________________________"
-        TotalItems2 = TotalItems2 + Nz(sd2!Amount, 0)
-        sd2.MoveNext
-        j = j + 1
-    Loop
-    
-    FillField WordDoc, "Total", Format$(TotalItems2, "currency")
-    
-sd1.Close
-sd2.Close
- 
- If IsNull([Forms]![Print Declaration].[ExcutedDate]) Then
-    FillField WordDoc, "ExcutedDate", "___ day of _____, ____ ."
- Else
-    FillField WordDoc, "ExcutedDate", IIf(IsNull([Forms]![Print Declaration].[ExcutedDate]), "___ day of _____, ____ .", NumSuffix(Format$([Forms]![Print Declaration].[ExcutedDate], "dd")) & " day of " & Format$([Forms]![Print Declaration].[ExcutedDate], "mmmm") & ", " & Format$([Forms]![Print Declaration].[ExcutedDate], "yyyy"))
- End If
- 
- FillField WordDoc, "TotFailedPetitionPay", Format(TotalItems2 + TotalItems1, "currency")
- FillField WordDoc, "FailedPayment", Format(TotalItems1, "currency")
- FillField WordDoc, "Name", "/s/ " & IIf(IsNull(Forms![Print Declaration].NameI), "", Forms![Print Declaration].NameI)
- FillField WordDoc, "Title", IIf(IsNull(Forms![Print Declaration].NameI), "Name: " & vbCr & "Title:", Forms![Print Declaration].NameI & vbCr & "Title: " & Forms![Print Declaration]!TitleI)
-
-WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & templateName
-'Call SaveDoc(WordDoc, d![FileNumber], templateName)
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-Set WordObj = Nothing
-d.Close
-
-End Sub
-Public Sub Doc_SOTSelectDC(KeepOpen As Boolean, State)
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-If State = "DC" Then
-    Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-ElseIf State = "VA" Then
-    Set d = CurrentDb.OpenRecordset("SELECT * FROM qryRptSOTSelectVA WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-End If
-
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Dim templateName As String
-If State = "DC" Then
-    templateName = "SOT Select Dc"
-ElseIf State = "VA" Then
-    templateName = "SOT Select VA"
-End If
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-
-WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
-WordDoc.Bookmarks("FileNumber").Range.Text = d![CaseList.FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), "", d![Fair Debt]) & vbNewLine & d!City & ", " & d![FCdetails.State] & " " & FormatZip(d!ZipCode)
-'WordDoc.Bookmarks("APTNum").Select
-'WordDoc.Bookmarks("APTNum").Range.Text = Nz(d![Fair Debt])
-
-'margin address:
-    If (IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) And d![FCdetails.State] = "VA") Or (IsNull([Forms]![foreclosurePrint]![cboOfficeLocation])) _
-                    Or ([Forms]![foreclosurePrint]![cboOfficeLocation] = 2) Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2") & vbCr & FirmPhoneVA()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Or (IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) And d![FCdetails.State] = "MD") Then   'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1") & vbCr & FirmPhone()
-        FillField WordDoc, "firmAddr", FirmAddress()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3") & vbCr & FirmPhone()
-        FillField WordDoc, "firmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-    End If
-    
-'FillField WordDoc, "firmAddr", FirmAddressVA()
-FillField WordDoc, "FileNo", "File Number: " & d![CaseList.FileNumber]
-FillField WordDoc, "DOTdate", Format(d!DOTdate, "mmmm d"", ""yyyy")
-FillField WordDoc, "Mortgagors", IIf(d![JurisdictionID] = 153, MortgagorNamesCaps(d![CaseList.FileNumber], 2, 1), MortgagorNamesCaps(d![CaseList.FileNumber], 2, 2))
-FillField WordDoc, "OriginalTrustee", d!OriginalTrustee
-FillField WordDoc, "OriginalBeneficiary", d!OriginalBeneficiary
-FillField WordDoc, "TrusteeNames", trusteeNames(0, 2)
- 
-If State = "DC" Then
-    FillField WordDoc, "FirmAddr", FirmAddressVA()
-    FillField WordDoc, "PropertyAddress", d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & ", " & d![City] & ", " & d![FCdetails.State] & " " & FormatZip(d![ZipCode])
-    FillField WordDoc, "Liber", d!Liber
-    FillField WordDoc, "Liber2", IIf(IsNull(d!Rerecorded), ", ", ", and re-recorded as Instrument Number " & d![Liber2] & ", ")
-    FillField WordDoc, "taxID", d!TaxID
-Else
-    FillField WordDoc, "FirmAddr", FirmShortAddressVA()
-    FillField WordDoc, "MERS", IIf(d!MERS, "Mortgage Electronic Registration Systems, Inc. (MERS) as nominee for ", "")
-    FillField WordDoc, "LiberFolio", IIf(IsNull([DOTrecorded]), "", IIf(Not IsNull(d![Liber]) And Not IsNull(d![Folio]), " in Book " & d![Liber] & " and Page " & d![Folio], " as Instrument " & d![Liber]))
-    FillField WordDoc, "DOTRecorded", Format$(d![DOTrecorded], "mmmm dd"", ""yyyy")
-    FillField WordDoc, "Jurisdiction", d!Jurisdiction
-    FillField WordDoc, "ReRecorded", IIf(IsNull(d![Rerecorded]), "", " and re-recorded on " & Format$(d![Rerecorded], "mmmm dd"", ""yyyy ") & _
-                    IIf((Not IsNull(d![Liber2]) And Not IsNull(d![Folio2])), " in Book " & d![Liber2] & " and Page " & d![Folio2] & ",", " as Instrument " & d![Liber2] & ","))
-    FillField WordDoc, "FrimVAAdd", FirmShortAddressVAOneLine()
-    FillField WordDoc, "taxID", IIf(d![JurisdictionID] = 56, "Tax Map Number: ", "Tax ID: ") & d![TaxID]
-End If
-
-FillField WordDoc, "InvestorAIF", d![Investor] & IIf(d![AIF] = True, ", by Select Portfolio Servicing, Inc., as attorney-in-fact ", "")
-
-WordObj.Selection.HomeKey wdStory, wdMove
-WordDoc.ActiveWindow.View = wdPrintView
-
-Set WordObj = Nothing
-d.Close
-End Sub
-
-Public Sub Doc_DeedApp(KeepOpen As Boolean) ' Deed of Appointment VA/MD
-Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-Dim d As Recordset      ' data
-
-Set d = CurrentDb.OpenRecordset("SELECT * FROM qryFCDocsWordLite WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-If d.EOF Then
-    MsgBox "The file might missing data, please check all the data required or contact programmers"
-    Exit Sub
-End If
-
-Dim templateName As String
-templateName = "Deed of Appointment"
-If (d![FCdetails.State] = "VA") And d![ClientID] <> 404 Then        'Bogman VA has its owe file
-  templateName = "SOT VA"
-ElseIf (d![FCdetails.State] = "MD") And d![ClientID] = 523 Then
-    templateName = "SOT Ditech MD"                  'templateName & " Green Tree"
-End If
-
-'If d![ClientID] = 345 Then
-'  templateName = templateName & " Kondaur"         'use SOT or SOT VA for Konduar  3/14/16
-If d!ClientID = 466 And d![FCdetails.State] = "MD" Then 'SELECT
-    templateName = templateName & " Select"
-ElseIf (d![ClientID] = 334 Or d![ClientID] = 477) Then
-  templateName = templateName & " Saxon"
-'ElseIf d![ClientID] = 87 Then
-'  templateName = templateName & " PNC"
-ElseIf d![ClientID] = 258 And d![FCdetails.State] = "MD" Then
-    templateName = templateName & " Green Tree"
-
-ElseIf d![ClientID] = 404 Then
-  templateName = templateName & " Bogman"
-ElseIf (d![ClientID] = 451 And Trim(UCase$(d!Investor)) Like "LPP*" And d![FCdetails.State] = "VA") Then
-    templateName = templateName & " Dove LPP"
-ElseIf (d![ClientID] = 451 And Trim(UCase$(d!Investor)) Like "LPP*" And d![FCdetails.State] = "MD") Then
-    templateName = templateName & " Dove LPP"
-ElseIf d![ClientID] = 451 Or (d!ClientID = 634 And d![FCdetails.State] = "MD") Then   '01/14/16 addCDA-Dove
-    templateName = templateName & " Dove"
-
-End If
-
-Set WordObj = CreateObject("Word.Application")
-Call OpenDocAsSaved(templateName)
-Set WordDoc = WordObj.Documents.Open(EMailPath & templateName, False)
-WordObj.Visible = True
-'
-'If d!ClientID = 451 Then
-'    WordDoc.Bookmarks("LastName").Select
-'    WordDoc.Bookmarks("LastName").Range.Text = d![PrimaryLastName]
-'End If
-
-WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
-WordDoc.Bookmarks("FileNumber").Range.Text = d![CaseList.FileNumber]
-WordDoc.Bookmarks("ProName").Select
-WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
-WordDoc.Bookmarks("PropertyAddress").Select
-WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress]
-WordDoc.Bookmarks("APTNum").Select
-WordDoc.Bookmarks("APTNum").Range.Text = Nz(d![Fair Debt])
-
-'margin address:
-If d![FCdetails.State] = "MD" Then
-    If [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-        FillField WordDoc, "FirmPh", FirmPhoneVA()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Or IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Then   'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    End If
-Else
-    If [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Or IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-        FillField WordDoc, "FirmPh", FirmPhoneVA()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Then    'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    End If
-End If
-    
-If (d![FCdetails.State] = "VA") Then
-    If [Forms]![foreclosurePrint]![cboOfficeLocation] = 2 Or IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) Then
-        FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
-        FillField WordDoc, "FirmPh", FirmPhoneVA()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 1 Then    'MD
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 1") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 1") & ", " & DLookup("State", "Rosenberg", "ID = 1") & " " & DLookup("Zip", "Rosenberg", "ID = 1")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then   'chespk
-        FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 3") & vbCr & _
-             DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID = 3")
-        FillField WordDoc, "FirmPh", FirmPhone()
-    End If
-End If
-
-If d!ClientID = 532 Or d!ClientID = 466 Then
-    FillField WordDoc, "Barcode", ""
-Else
-    FillField WordDoc, "Barcode", IIf(d!ClientID <> 634, IIf(d!ClientID <> 444, AddDocPreIndex(d![CaseList.FileNumber], 226, ""), ""), "")
-End If
-
-FillField WordDoc, "PrimaryLName", Nz(d!PrimaryLastName)   '01/14/16
-
-If d!JurisdictionID = 56 And d![FCdetails.State] = "VA" Then
-    FillField WordDoc, "Tax", "Tax Map Number:"
-Else
-    FillField WordDoc, "Tax", "Tax ID #:"
-End If
-
-If d![FCdetails.State] = "MD" Then
-    FillField WordDoc, "ReRecorded", IIf(IsNull(d![Rerecorded]), "", ", and re-recorded on " & Format$(d![Rerecorded], "mmmm d, yyyy") & " at Liber " & d![Liber2] & ", Folio " & d![Folio2])
-
-ElseIf (d![FCdetails.State] = "VA") Then
-    FillField WordDoc, "ReRecorded", IIf(IsNull(d![Rerecorded]), "", IIf(IsNull(d![Folio2]), ", and re-recorded on " & Format$(d![Rerecorded], "mmmm d, yyyy") & _
-    " at Instrument Number " & d![Liber2], ", and re-recorded on " & Format$(d![Rerecorded], "mmmm d, yyyy") & " at Liber " & IIf(IsNull(d![Liber2]), " ", d![Liber2]) & ", Folio " & d![Folio2]))
-'ElseIf d!JurisdictionID = 6 Then  'Calvert County
-'    FillField WordDoc, "ReRecorded", IIf(IsNull(d![Rerecorded]), "", ", and re-recorded on " & Format$(d![Rerecorded], "mmmm d, yyyy") & " at Book " & d![Liber2] & ", Page " & d![Folio2])
-ElseIf d![FCdetails.State] = "DC" Then
-
-     FillField WordDoc, "ReRecorded", IIf(IsNull(d![Rerecorded]), "", ", and re-recorded on " & Format$(d![Rerecorded], "mmmm d, yyyy") & " at Instrument Number " & d![Liber2])
-
-End If
-
-FillField WordDoc, "upto", IIf(d!ClientID = 567, "up to ", "")
-FillField WordDoc, "LoanNumber", d!LoanNumber
-
-
-If d!JurisdictionID = 153 Then 'Accomack VA
-       FillField WordDoc, "OriginalTrustee", UCase$(d!OriginalTrustee)
-    'FillField WordDoc, "InvestorAIF", IIf(d!AIF = True, d!LongClientName & " as Attorney in Fact for ", "") & UCase$(d!Investor)
-'    FillField WordDoc, "DCPUF", IIf(d![ClientID] = 593 And ([Forms]![ForeclosurePrint]![txtDesignatedAttorney] = 3 Or [Forms]![ForeclosurePrint]![txtDesignatedAttorney] = 0), _
-'                    UCase("By: Rosenberg & Associates, LLC as attorney in fact"), "")
-
-    FillField WordDoc, "InvestorAIF", IIf((d!AIF = True And d!ClientID = 373), d!Investor & ", by BSI Financial Services as attorney in fact", _
-        IIf((d![AIF] = True And d![ClientID] = 523), IIf(d![FCdetails.State] = "MD", "Ditech Financial LLC, as servicer for " & d![Investor], d![Investor] & ", by Ditech Financial LLC f/k/a Green Tree Servicing LLC"), _
-        IIf((d![AIF] = True And d![ClientID] = 527), d![Investor] & ", By Rushmore Loan Management Services LLC as its appointed Attorney in Fact", _
-        IIf((d![AIF] = True And d![ClientID] = 557), d![Investor] & " by Caliber Home Loans, Inc., as its attorney in fact", _
-        IIf((d!AIF = True And d!ClientID = 532), UCase$(d![Investor]) & ", by and through Selene Finance LP, its Servicer and Attorney-in-Fact", _
-        IIf((d![AIF] = True And (d![ClientID] = 605 Or d![ClientID] = 662)), d![LongClientName] & " as Servicer for " & UCase$(d![Investor]), _
-        IIf((d![AIF] = True And d![ClientID] = 567 And d![FCdetails.State] = "VA"), "Nationstar Mortgage LLC as attorney-in-fact for " & d![Investor], _
-        IIf(d!ClientID = 451, IIf(InStr(d!Investor, "LPP") <> 0, UCase("LPP Mortgage, Inc., f/k/a LPP Mortgage, Ltd."), d!Investor), _
-        IIf(d![AIF] = True And d!ClientID <> 73, d![LongClientName] & " as Attorney in Fact for " & UCase$(d![Investor]), _
-                                UCase$(d![Investor])))))))))) & IIf(d!ClientID = 73, ", By Carrington Mortgage Services, LLC as Attorney in Fact and Servicing Agent", "")
-    
-    FillField WordDoc, "OriginalBeneficiary", UCase$((d!OriginalBeneficiary) & IIf((d!ClientID = 451 And d!MERS = -1), ", its successors and assigns", ""))
-    FillField WordDoc, "AssumedBy", IIf(IsNull(d!OriginalMortgagors), "", "assumed by " & UCase$(MortgagorNamesCaps(0, 2, 2))) & " "
-    FillField WordDoc, "MortgagorNames", IIf(IsNull(d!OriginalMortgagors), UCase$(MortgagorNamesCaps(0, 2, 2)), UCase$(IIf(IsNull(d!OriginalMortgagors), " ", d!OriginalMortgagors)))
-    FillField WordDoc, "TrusteeNames", UCase$(trusteeNames(0, 2))
-'    FillField WordDoc, "Investor", UCase$(d!Investor)
-    FillField WordDoc, "Investor", IIf(d!ClientID = 451, IIf(InStr(d!Investor, "LPP") <> 0, UCase("LPP Mortgage, Inc., f/k/a LPP Mortgage, Ltd."), UCase$(d!Investor)), UCase$(d!Investor))
-Else
-    FillField WordDoc, "OriginalTrustee", d!OriginalTrustee
-    FillField WordDoc, "InvestorAIF", _
-    IIf(d![ClientID] = 634 And d![FCdetails.State] = "MD", _
-        "The Community Development Administration of the" & vbCr & "Department of Housing and Community" _
-         & vbCr & "Development for the State of Maryland" & vbCr & "By: Dovenmuehle Mortgage Inc., its attorney-in-fact", _
-    IIf((d![ClientID] = 518 And (d![JurisdictionID] = 1 Or d![FCdetails.State] = "MD") And d!LoanType = 4), _
-        "Federal National Mortgage Association (""Fannie Mae""), a corporation organized and existing under the laws of the United States of America, beneficiary, by Seterus, Inc., its Attorney-in-Fact ", _
-    IIf((d![AIF] = True And d![ClientID] = 523), IIf(d![FCdetails.State] = "MD", "Ditech Financial LLC, as servicer for " & d![Investor], d![Investor] & ", by Ditech Financial LLC f/k/a Green Tree Servicing LLC"), _
-    IIf((d![AIF] = True And d![ClientID] = 527), d![Investor] & ", By Rushmore Loan Management Services LLC as its appointed Attorney in Fact", _
-    IIf((d!AIF = True And d!ClientID = 373), d!Investor & ", by BSI Financial Services as attorney in fact", _
-    IIf((d!AIF = True And d!ClientID = 557), d!Investor & " by Caliber Home Loans, Inc., as its attorney in fact", _
-    IIf((d![AIF] = True And d![ClientID] = 523), IIf(d!JurisdictionID = 1 Or d![FCdetails.State] = "VA" Or d![FCdetails.State] = "MD", d![Investor] & ", By Ditech Financial LLC f/k/a Green Tree Servicing LLC", d![Investor] & " by Green Tree Servicing LLC as servicer"), _
-    IIf((d![AIF] = True And d!ClientID = 532), d![Investor] & ", by and through Selene Finance LP, its Servicer and Attorney-in-Fact", _
-    IIf((d![AIF] = True And (d![ClientID] = 605 Or d![ClientID] = 662)), d![LongClientName] & " as Servicer for " & d![Investor], _
-    IIf((d![AIF] = True And d!ClientID = 466), d![Investor] & ", by Select Portfolio Servicing, Inc., as attorney-in-fact", _
-    IIf((d![AIF] = True And d!ClientID = 73 And d![FCdetails.State] = "MD"), d![Investor] & ", By Carrington Mortgage Services, LLC as Attorney in Fact and Servicing Agent", _
-    IIf((d![AIF] = True And d![ClientID] = 567), "Nationstar Mortgage LLC as attorney-in-fact for " & d![Investor], _
-    IIf(d![AIF] = True And d!ClientID <> 73, d![LongClientName] & " as Attorney in Fact for " & d![Investor], _
-    IIf(d!ClientID = 451, IIf(InStr(d!Investor, "LPP") <> 0, "LPP Mortgage, Inc., f/k/a LPP Mortgage, Ltd.", d!Investor), _
-    IIf(d!AIF = True And d!ClientID = 73, d![Investor] & ", By Carrington Mortgage Services, LLC as Attorney in Fact and Servicing Agent", d!Investor)))))))))))))))
-    
-    FillField WordDoc, "OriginalBeneficiary", d!OriginalBeneficiary & IIf(((d!ClientID = 451 Or (d!ClientID = 634 And d![FCdetails.State] = "MD")) And d!MERS = -1), ", its successors and assigns", "")
-    FillField WordDoc, "AssumedBy", IIf(IsNull(d!OriginalMortgagors), "", "assumed by " & MortgagorNamesCaps(0, 2, 2)) & " "
-    FillField WordDoc, "MortgagorNames", IIf(IsNull(d!OriginalMortgagors), MortgagorNamesCaps(0, 2, 2), d!OriginalMortgagors)
-    FillField WordDoc, "TrusteeNames", trusteeNames(0, 2)
-    FillField WordDoc, "Investor", IIf(d!ClientID = 451, IIf(InStr(d!Investor, "LPP") <> 0, "LPP Mortgage, Inc., f/k/a LPP Mortgage, Ltd.", d!Investor), d!Investor)
-End If
-    FillField WordDoc, "DCPUF", IIf(d![ClientID] = 593 And ([Forms]![foreclosurePrint]![txtDesignator] = 3 Or [Forms]![foreclosurePrint]![txtDesignator] = 1), _
-                    "By: Rosenberg & Associates, LLC as attorney in fact", "")
-Dim desAttny As String
-'If IsNull([Forms]![ForeclosurePrint]![Attorney].Column(1)) Then
-'    desAttny = " "
-'Else
-'    If d![FCdetails.State] <> "VA" Then
-'        desAttny = Replace([Forms]![ForeclosurePrint]![Attorney].Column(1), ", Esq.", "")
-'    Else
-'        desAttny = Forms!ForeclosurePrint!txtClientContact
-'    End If
-'End If
 
 If d!ClientID = 593 Then
         If Forms!foreclosurePrint!txtDesignator = 1 Then
-'            If d![FCdetails.State] = "VA" Then
+
             desAttny = Forms!foreclosurePrint!txtClientContact
 
         ElseIf Forms!foreclosurePrint!txtDesignator = 3 Then
                 If d![FCdetails.State] <> "VA" Then
                     desAttny = Replace([Forms]![foreclosurePrint]![Attorney].Column(1), ", Esq.", "")
                 Else
-                
-'                 desAttny = " (name) " & Replace([Forms]![ForeclosurePrint]![Attorney].Column(1), ", Vice President", "")
+
                     desAttny = Replace([Forms]![foreclosurePrint]![Attorney].Column(1), ", Vice President", "")
                 End If
         Else
@@ -1543,11 +23,7 @@ FillField WordDoc, "InvestorName2", IIf(d![ClientID] = 593, IIf(desAttny = "", "
         " (name) " & IIf((d![ClientID] = 523 Or d![ClientID] = 258) And d![FCdetails.State] = "MD", "", Split(ReportArgs, "|")(0)))
 
 If d![ClientID] = 593 Then
-'    If d![FCdetails.State] <> "VA" Then
-            FillField WordDoc, "InvestorTitle2", IIf(desAttny <> "", "Attorney", "(Title)_____________________")
-'    Else
-'        FillField WordDoc, "InvestorTitle2", Nz(Split(ReportArgs, "|")(1))
-'    End If
+
 Else
     FillField WordDoc, "InvestorTitle2", " (title) " & IIf((d![ClientID] = 523 Or d![ClientID] = 258) And d![FCdetails.State] = "MD", "", Split(ReportArgs, "|")(1))
 End If
@@ -1730,7 +206,7 @@ If OpenArg = "1" Then
     FillField WordDoc, "Option4", "A non-original copy of the Note is attached as Exhibit A which is the most recent copy known by me to be part of PNC's computerized records.  Exhibit A reflects that the Note was made and executed by " & _
         Replace(BrowersNamesV2(d![CaseList.FileNumber], 2), "Estate of ", "") & " in the principal amount of " & Format$(d![OriginalPBal], "Currency") & " on " & _
          Format$(d!DOTdate, "mmmm d, yyyy") & ", with the obligation to be secured by property located at " & d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), "", ", " & d![Fair Debt]) & ", " & d![City] & ", " & d![FCdetails.State] & _
-         " " & FormatZip(d![ZipCode]) & ".  I have separately reviewed the financial terms of the loan and the property address as recorded in PNC‚Äôs computerized records and, based on that review, said information as stated here and in Exhibit A is consistent with PNC‚Äôs computerized records. "
+         " " & FormatZip(d![ZipCode]) & ".  I have separately reviewed the financial terms of the loan and the property address as recorded in PNCís computerized records and, based on that review, said information as stated here and in Exhibit A is consistent with PNCís computerized records. "
 Else
     FillField WordDoc, "Option4", "PNC's computerized records reflect the Note's terms are as follows:" & vbCr & vbCr & _
         "Date of Note:   ____________________        Maturity Date: ____________________" & vbCr & vbCr & _
@@ -5057,7 +3533,7 @@ FillField WordDoc, "FetchNoteOwnerT", FetchNoteOwner(d![LoanType], d![Investor],
 FillField WordDoc, "CurrentT", IIf(d![LoanType] = 5, "", "current ")
 FillField WordDoc, "Loantext", IIf(d![LoanType] = 1 Or d![LoanType] = 2 Or d![LoanType] = 3, "", "For purposes of foreclosure, the Note or other debt instrument is held by " & d![Investor] & ".")
 FillField WordDoc, "Investor", d![Investor]
-FillField WordDoc, "Loaner", IIf(d!LoanType = 5, "I HEREBY CERTIFY that Federal Home Loan Mortgage Corp. (‚ÄúFHLMC‚Äù is the owner of the debt instrument secured by the Mortgage or Deed of Trust which is the subject of the instant foreclosure action, and has authorized Ocwen Loan Servicing, LLC to be the noteholder for purposes of this foreclosure action.", _
+FillField WordDoc, "Loaner", IIf(d!LoanType = 5, "I HEREBY CERTIFY that Federal Home Loan Mortgage Corp. (ìFHLMCî is the owner of the debt instrument secured by the Mortgage or Deed of Trust which is the subject of the instant foreclosure action, and has authorized Ocwen Loan Servicing, LLC to be the noteholder for purposes of this foreclosure action.", _
 "I HEREBY CERTIFY that " & d![Investor] & " is the owner of the debt instrument secured by the Mortgage or Deed of Trust which is the subject of the instant foreclosure action.")
 FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
 FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
@@ -6763,7 +5239,7 @@ ElseIf [Forms]![foreclosurePrint]![cboOfficeLocation] = 3 Then
                   DLookup("City", "Rosenberg", "ID = 3") & ", " & DLookup("State", "Rosenberg", "ID = 3") & " " & DLookup("Zip", "Rosenberg", "ID =2")
 End If
 
-FillField WordDoc, "MDHC", IIf(d![FCdetails.State] = "MD", IIf(d![ClientID] = 404 Or d![ClientID] = 531, UCase("Exempt from recordation and transfer taxes pursuant to Sections 12-108(a)(1)(iii) and 13-207(a)(1) of the Tax ‚Äì Property Article, Annotated Code of Maryland."), ""), "")
+FillField WordDoc, "MDHC", IIf(d![FCdetails.State] = "MD", IIf(d![ClientID] = 404 Or d![ClientID] = 531, UCase("Exempt from recordation and transfer taxes pursuant to Sections 12-108(a)(1)(iii) and 13-207(a)(1) of the Tax ñ Property Article, Annotated Code of Maryland."), ""), "")
 FillField WordDoc, "DMHCDesc", IIf(d![ClientID] <> 404, "", "PER MD TAX PROPERTY ACTICLE, SECTION 12-108A & SECTION 13-207 A-1, THIS TRANSFER IS EXEMPT FROM TRANSFER AND RECORDATION TAXES")
 FillField WordDoc, "TrusteeNames", trusteeNames(0, 2)
 FillField WordDoc, "subPurchaser", d!SubstitutePurchaser
@@ -7617,7 +6093,7 @@ sPlura = IIf(CountNames(d![CaseList.FileNumber], "Mortgagor = True or Owner = Tr
         FillField WordDoc, "Jurisdiction", IIf(IsNull(d!Jurisdiction), "", d!Jurisdiction)
         FillField WordDoc, "vacateDate", vacateDate
         FillField WordDoc, "chkClient", IIf(d!ClientID = 518, "13. It is expressly understood by the Grantor and Grantee that each shall bear its own costs in connection with the dispute, litigation, the modification and this agreement; " & _
-            "and that each waives and releases any claims they otherwise have or may have to such costs and attorney‚Äôs fees." & vbCr & vbCr & "14. ", "13. ")
+            "and that each waives and releases any claims they otherwise have or may have to such costs and attorneyís fees." & vbCr & vbCr & "14. ", "13. ")
         FillField WordDoc, "First", IIf(IsNull(d!First), "", d!First)
         FillField WordDoc, "First", IIf(IsNull(d!First), "", d!First)
         FillField WordDoc, "Last", IIf(IsNull(d!Last), "", d!Last)
@@ -7747,7 +6223,7 @@ dName = IIf(Forms!foreclosurePrint!chDeedOfApp, "Appointment of Substitute Trust
 FillField WordDoc, "DocName", Nz(dName)
 FillField WordDoc, "Client", Nz(d!LongClientName)
 FillField WordDoc, "FLMAOccDocktMD", IIf(Forms!foreclosurePrint!chLossMitFinal And ((Forms!ForeclosureDetails!OccupancyStatusID = 4 Or Forms!ForeclosureDetails!OccupancyStatusID = 5) _
-            And IsNull(d!Docket) And d![FCdetails.State] = "MD"), "Please use ‚ÄòProperty is Vacant‚Äô ONLY as the reason on this FLMA.", "_______________________")
+            And IsNull(d!Docket) And d![FCdetails.State] = "MD"), "Please use ëProperty is Vacantí ONLY as the reason on this FLMA.", "_______________________")
 FillField WordDoc, "ClientLoanT", Forms!ForeclosureDetails!LoanNumber
 FillField WordDoc, "State", Forms!ForeclosureDetails!State
 'FillField WordDoc, "FirstLegalDate", If Is Null(Forms!foreclosureDetails![567]),"",
@@ -10022,45 +8498,12 @@ Else
 End If
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Return Doc Cover LTR.doc"
-'Call SaveDoc(WordDoc, d![FileNumber], "Return Doc Cover LTR.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 End Sub
 
 Public Sub Doc_LisPendens(KeepOpen As Boolean)
-'Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
-'Dim d As Recordset      ' data
-'
-'Set d = CurrentDb.OpenRecordset("SELECT * FROM qryLisPendens WHERE CaseList.FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
-'If d.EOF Then
-'    MsgBox "The file might missing data, please check all the data required or contact programmers"
-'    Exit Sub
-'End If
-'
-'Set WordObj = CreateObject("Word.Application")
-'Call OpenDocAsSaved("Notice of Lis Pendens")
-'Set WordDoc = WordObj.Documents.Open(EMailPath & "Notice of Lis Pendens.doc", False)
-'WordObj.Visible = True
-'
-'FillField WordDoc, "Date", Format(Date, "mmmm d, yyyy")
-'FillField WordDoc, "ComplaintFiled", Format(d!ComplaintFiled, "mmmm d, yyyy")
-'FillField WordDoc, "Investor", d!Investor
-'FillField WordDoc, "PropertyAddress", d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & ", " & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
-'FillField WordDoc, "Owners", OwnerNames(0, 2)
-'FillField WordDoc, "CaseCaption", d![Investor] & " v. " & DefendantNames(0, 99)
-'FillField WordDoc, "CaseNumber", d!CourtCaseNumber
-'FillField WordDoc, "OriginalPBal", Format(d!OriginalPBal, "Currency")
-'FillField WordDoc, "LegalDescription", d!LegalDescription
-'FillField WordDoc, "AttyName", GetStaffFullName(Forms!ForeclosurePrint!Attorney.Column(0)) & " (" & FetchbarNumberPoundSign(Forms!ForeclosurePrint!Attorney, d![State]) & ")"
-'
-'WordObj.Selection.HomeKey wdStory, wdMove
-''WordDoc.SaveAs EMailPath & "Notice of Lis Pendens.doc"
-''Call SaveDoc(WordDoc, Forms![Case list].FileNumber, "Notice of Lis Pendens.doc")
-''If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
-'Set WordObj = Nothing
-'d.Close
+
 
 Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
 Dim d As Recordset      ' data
@@ -10208,7 +8651,6 @@ WordObj.Visible = True
 
 WordDoc.Bookmarks("FileNumber").Select
 WordDoc.Bookmarks("FileNumber").Range.Text = IIf(d!ClientID = 575, "", "File Number: " & d![CaseList.FileNumber])
-'WordDoc.Bookmarks("AttorneyInfo").Select
 
 'RE-VISIT
 'WordDoc.Bookmarks("AttorneyInfo").Range.Text = "Diane Rosenberg" & vbCr & "VA Bar 35237"
@@ -10824,9 +9266,7 @@ FillField WordDoc, "ESig", IIf([Forms]![BankruptcyPrint]![chElectronicSignature]
     
 WordObj.Selection.HomeKey wdStory, wdMove
 WordObj.ScreenUpdating = True
-'WordDoc.SaveAs EMailPath & "ConsentTerminatingWD13.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "ConsentTerminatingWD13.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 Chapter = ""
@@ -10881,34 +9321,19 @@ FillField WordDoc, "mFirmAddr", "Rosenberg & Associates, LLC " & vbCr & DLookup(
 FillField WordDoc, "Defendants", DefendantNames(0, 99)
 FillField WordDoc, "JudgmentEntered", Format$(d!JudgmentEntered, "mmmm d, yyyy")
 FillField WordDoc, "CourtCaseNumber", d!CourtCaseNumber
-'FillField WordDoc, "LegalDescription", d!LegalDescription
-'FillField WordDoc, "TrusteeWord", UCase$(TrusteeWord(d![CaseList.FileNumber], 0))
 FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(IsNull(d![Fair Debt]), "", ", " & d![Fair Debt]) & vbCr & "" & d!City & ", " & d![FCdetails.State] & ", " & FormatZip(d!ZipCode)
-'FillField WordDoc, "DOTRecorded", Format$(d!DOTrecorded, "mmmm d, yyyy")
-'FillField WordDoc, "DoTDate", Format$(d!DOTdate, "mmmm d, yyyy")
-'FillField WordDoc, "Liber", d!Liber
-'FillField WordDoc, "Docket", Format$(d!Docket, "mmmm d, yyyy")
 FillField WordDoc, "SaleDate", Format$(d!Sale, "m/d/yyyy")
 FillField WordDoc, "SaleDate2", Format$(d!Sale, "mmmm dd, yyyy")
-'FillField WordDoc, "SaleTime", Format$(d!SaleTime, "h:nn AM/PM")
-'FillField WordDoc, "TaxID", d!TaxID
-'FillField WordDoc, "IRSLiens", IIf(d!IRSLiens, "The property will be sold subject to a 120 day right of redemption by the Internal Revenue Service.  ", "")
-'FillField WordDoc, "PriorLien", IIf(d!LienPosition <= 1, "", "The property will be sold subject to a prior mortgage, the amount to be announced at the time of sale.  ")
-'FillField WordDoc, "Deposit", Format$(d!Deposit, "Currency")
+
 FillField WordDoc, "Trustees", trusteeNames(d![CaseList.FileNumber], 2)
 FillField WordDoc, "TrusteeList", trusteeNames(0, 3, , vbCr)
 FillField WordDoc, "PrintDate", Format(Date, "mmmm, d, yyyy")
 FillField WordDoc, "Parties", NoticeNames2(d![CaseList.FileNumber], "(noteholder = true or NoticeType = 2)")
-'FillField WordDoc, "Date", Format(Date, "mmmm d, yyyy")
-'FillField WordDoc, "ComplaintFiled", Format(d!ComplaintFiled, "mmmm d, yyyy")
+
 FillField WordDoc, "Investor", d!Investor
-'FillField WordDoc, "PropertyAddress", d![PropertyAddress] & ", " & d![City] & ", " & d![State] & " " & d![ZipCode]
-'FillField WordDoc, "Owners", OwnerNames(0, 2)
-'FillField WordDoc, "CaseCaption", d![Investor] & " v. " & DefendantNames(0, 99)
+
 FillField WordDoc, "CourtCaseNumber", d!CourtCaseNumber
-'FillField WordDoc, "OriginalPBal", Format(d!OriginalPBal, "Currency")
-'FillField WordDoc, "LegalDescription", d!LegalDescription
-'FillField WordDoc, "AttyName", GetStaffFullName(Forms!ForeclosurePrint!Attorney.Column(0)) & " (" & FetchBarNumberPoundSign(Forms!ForeclosurePrint!Attorney, d![State]) & ")"
+
 FillField WordDoc, "Interest", IIf(Nz(dd![Interest]) = 0, "", "Interest " & Format$(dd![Interest3From], "m/d/yyyy" & " - " & Format$(dd![Interest3To], "m/d/yyyy")))
 FillField WordDoc, "PropertyTaxesDesc", Nz(dd!PropertyTaxesDesc, "")
 FillField WordDoc, "PropertyTaxes", Format$(dd![PropertyTaxes], "Currency")
@@ -12968,7 +11393,6 @@ Public Sub Doc_certOfNoncompliance(KeepOpen As Boolean)
 Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
 Dim FileNumber As Long
 Dim d As Recordset
-'Dim Debtorsplural As Boolean
 
 FileNumber = Forms![case list]!FileNumber
 Set d = CurrentDb.OpenRecordset("Select * from qryRptBKNonPayWord where fileNumber = " & FileNumber, dbOpenSnapshot)
@@ -12997,8 +11421,7 @@ ElseIf [Forms]![BankruptcyPrint]![cboOfficeLocation] = 3 Then   'chespk
 End If
 
 FillField WordDoc, "Header", d!Location
-'Debtorsplural = (CountNames(FileNumber, "BKDebtor = True AND (Owner=True OR Mortgagor=True)") > 1)
-'FillField WordDoc, "Debtors", DebtorNames(FileNumber, 3)
+
 
 FillField WordDoc, "Investor", d!Investor
 FillField WordDoc, "CaseNo", d!CaseNo
@@ -13066,11 +11489,7 @@ WordObj.Visible = True
 WordObj.ScreenUpdating = False
 WordDoc.Bookmarks("FileNumber").Select      ' use this method for bookmarks in header/footer
 WordDoc.Bookmarks("FileNumber").Range.Text = d![FileNumber]
-'WordDoc.Bookmarks("AttorneyInfo").Select
-'WordDoc.Bookmarks("AttorneyInfo").Range.Text = "Diane Rosenberg" & vbCr & "VA Bar 35237"
 
-'Judge = Right$(UCase$(d!CaseNo), 3)
-'CoDebtor = (GetNames(0, 1, "BKCoDebtor=True") <> "" And d![BKdetails.Chapter] = 13)
 
 encumbrances = Nz((InputBox("Sum of known encumbrances?")), 0)
 
@@ -13281,9 +11700,7 @@ FillField WordDoc, "BkService", BKService(0)
 
 WordObj.Selection.HomeKey wdStory, wdMove
 WordObj.ScreenUpdating = True
-'WordDoc.SaveAs EMailPath & "BOA Motion For Relief CH13.doc"
-'Call SaveDoc(WordDoc, d![FileNumber], "BOA Motion for Relief CH13.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -13426,27 +11843,11 @@ FillField WordDoc, "Chapter", d![BKdetails.Chapter]
 FillField WordDoc, "Investor", d!Investor
 FillField WordDoc, "Debtors", UCase$(DebtorNames(0, 3, vbCr)) & vbCr & _
     "     Debtor" & IIf(Debtorsplural, "s", "")
-'FillField WordDoc, "InvestorAddr", UCase$(d!Investor) & vbCr & RemoveLF(d!InvestorAddress)
 FillField WordDoc, "Respondents", _
     GetAddresses(0, 4, _
         IIf(d![BKdetails.Chapter] = 13, _
             "(BKDebtor=True OR BKCoDebtor=True) AND (BKOwner=True OR BKMortgagor=True)", _
             "BKDebtor=True AND (BKOwner=True OR BKMortgagor=True)"), vbCr)
-            
-'from Movant Certification pop up screen:
-'Dim strYes, strUnpaid, strAccru, strlateChg, strFee, strEscr, strIntrst, strOther, strDiem, strBasis, strMovant, strAttch As String
-'strYes = IIf([Forms]![frmMovantCertification]![ChNo] = -1, "N/A", [Forms]![frmMovantCertification]![txtYes])
-'strlateChg = IIf(IsNull([Forms]![frmMovantCertification]![txtlateChg]), "N/A", Format([Forms]![frmMovantCertification]![txtlateChg], "Currency"))
-'strAccru = IIf(IsNull([Forms]![frmMovantCertification]![TxtAccru]), "N/A", Format([Forms]![frmMovantCertification]![TxtAccru], "Currency"))
-'strFee = IIf(IsNull([Forms]![frmMovantCertification]![TxtFee]), "N/A", Format([Forms]![frmMovantCertification]![TxtFee], "Currency"))
-'strEscr = IIf(IsNull([Forms]![frmMovantCertification]![TxtEscr]), "N/A", Format([Forms]![frmMovantCertification]![TxtEscr], "Currency"))
-'strIntrst = IIf(IsNull([Forms]![frmMovantCertification]![TxtIntrst]), "N/A", Format([Forms]![frmMovantCertification]![TxtIntrst], "Currency"))
-'strOther = IIf(IsNull([Forms]![frmMovantCertification]![txtOther]), "N/A", Format([Forms]![frmMovantCertification]![txtOther], "Currency"))
-'strDiem = IIf(IsNull([Forms]![frmMovantCertification]![txtPerDiem]), "N/A", Format([Forms]![frmMovantCertification]![txtPerDiem], "Currency"))
-'strBasis = IIf(IsNull([Forms]![frmMovantCertification]![TxtBasis]), "N/A", Format([Forms]![frmMovantCertification]![TxtBasis], "Currency"))
-'strMovant = IIf(IsNull([Forms]![frmMovantCertification]![Txtmovant]), "N/A", Format([Forms]![frmMovantCertification]![Txtmovant], "Currency"))
-'strAttch = IIf(IsNull([Forms]![frmMovantCertification]![TxtAttch]), "N/A", [Forms]![frmMovantCertification]![TxtAttch])
-'strUnpaid = IIf(IsNull([Forms]![frmMovantCertification]![txtUnpaid]), "N/A", Format([Forms]![frmMovantCertification]![txtUnpaid], "Currency"))
 
 FillField WordDoc, "YN", IIf([Forms]![frmMovantCertification]![ChNo] = -1, "N/A", [Forms]![frmMovantCertification]![txtYes])
 FillField WordDoc, "unpaid", IIf(IsNull([Forms]![frmMovantCertification]![txtUnpaid]), "N/A", Format([Forms]![frmMovantCertification]![txtUnpaid], "Currency"))
@@ -13481,9 +11882,6 @@ Public Sub Doc_OrderGrantingExtendofStay(KeepOpen As Boolean)
 Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Range
 Dim d As Recordset
 Dim FileNumber As Long, Debtorsplural As Boolean
-'Dim response As Integer
-'Dim rightToForecloseLanguage As String
-'Dim i As Integer, itemcount As Integer, TotalItems As Currency, itemsFields As String
 
 FileNumber = Forms![case list]!FileNumber
 Set d = CurrentDb.OpenRecordset("SELECT * FROM qryMotionExtendStayWord WHERE CaseList.FileNumber=" & FileNumber, dbOpenSnapshot)
@@ -13926,9 +12324,6 @@ FillField WordDoc, "PropertyAddressOneLine", d![PropertyAddress] & IIf(Len(d![Fa
 FillField WordDoc, "Jurisdiction", d!Jurisdiction
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Quit Claim Deed " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Quit Claim Deed " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 End Sub
@@ -14089,9 +12484,6 @@ FillField WordDoc, "Investor", IIf(Split(ReportArgs, "|")(2) = 3, IIf(d![Substit
 FillField WordDoc, "ThisDate", ThisDate(Date)
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Line.doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Line.doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 
@@ -14271,9 +12663,6 @@ FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               _
 FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Loss Mitigation - Final Select " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Loss Mitigation - Final Select " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 
@@ -14307,9 +12696,6 @@ FillField WordDoc, "Debtor", DebtorNames(0, 2)
 FillField WordDoc, "PropertyAddr", d!PropertyAddress & IIf(IsNull(d![Fair Debt]), " ", ", " & d![Fair Debt] & ", ") & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Reaff Letter" & d![FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![FileNumber], "Reaff Letter" & d![FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 End Sub
@@ -14341,9 +12727,7 @@ FillField WordDoc, "Investor", [Forms]![case list]![Investor]
 FillField WordDoc, "PropertyAddr", d!PropertyAddress & IIf(IsNull(d![Fair Debt]), " ", ", " & d![Fair Debt] & ", ") & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Dove Loss Mit Letter" & d![FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![FileNumber], "Dove Loss Mit Letter" & d![FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -14418,9 +12802,7 @@ FillField WordDoc, "Debtor", DebtorNames(0, 2)
 FillField WordDoc, "PropertyAddr", d!PropertyAddress & IIf(IsNull(d![Fair Debt]), " ", ", " & d![Fair Debt] & ", ") & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "MT Loss Mit Letter" & d![FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![FileNumber], "MT Loss Mit Letter" & d![FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -14481,9 +12863,7 @@ FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               _
 FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Loss Mitigation - Prelim Select " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Loss Mitigation - Prelim Select " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -14511,7 +12891,6 @@ WordDoc.Bookmarks("ProName").Select
 WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
 WordDoc.Bookmarks("PropertyAddress").Select
 WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(IsNull(d![Fair Debt]), "", " " & d![Fair Debt]) & vbCr & d!City & ", " & d![FCdetails.State] & " " & FormatZip(d!ZipCode)
-'WordDoc.Bookmarks("APTNum").Select
 'WordDoc.Bookmarks("APTNum").Range.Text = Nz(d![Fair Debt])
 
 
@@ -14593,7 +12972,6 @@ FillField WordDoc, "NOI", Format$(d!NOI, "mmmm d, yyyy")
 
 FillField WordDoc, "RemainingPBal", Format$(d!RemainingPBal, "Currency")
 FillField WordDoc, "FromToDates", IIf([Forms]![Print Statement of Debt]!Check86 = 0, "From  " & [Forms]![Print Statement of Debt]![Text100] & "  To  " & [Forms]![Print Statement of Debt]![Text102] & "  at  " & [Forms]![Print Statement of Debt]![Text104] & "%", "")
-'FillField WordDoc, "Rate", " " & [Forms]![Print Statement of Debt]![Text104] & "%"
 FillField WordDoc, "IntrestAmt", Format$([Forms]![Print Statement of Debt]![Text94], "Currency")
 
 'if there're adj rates:
@@ -14653,9 +13031,6 @@ End If
 FillField WordDoc, "Total", "Total" & vbTab & Format$(TotalItems + [Forms]![Print Statement of Debt]![Text94] + d!RemainingPBal, "Currency")
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Combined Affidavit of Compliance Nationstar " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Combined Affidavit of Compliance Nationstar " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 
@@ -14771,7 +13146,6 @@ templateName = "Combined Affidavit of Compliance"
 If (d![ClientID] = 466) Then
     templateName = templateName & " Select"
 End If
-'templateName = templateName & ".doc"
 
 Set WordObj = CreateObject("Word.Application")
 Call OpenDocAsSaved(templateName)
@@ -14825,15 +13199,8 @@ FillField WordDoc, "LPIdate", Format$(d![LPIDate], "mmmm d, yyyy")
 FillField WordDoc, "LPIdate+1", Format$(d![LPIDate] + 1, "mmmm d, yyyy")
 FillField WordDoc, "OriginalPBal", Format$(d!OriginalPBal, "Currency")
 
-'FillField WordDoc, "PaidStr", IIf((Nz(d![RemainingPBal], 0) > Nz(d![OriginalPBal], 0)), "Additional Interest", "Paid on principal")
-'FillField WordDoc, "Paid", Format$(d!OriginalPBal - d!RemainingPBal, "Currency")
 FillField WordDoc, "RemainingPBal", Format$(d!RemainingPBal, "Currency")
 FillField WordDoc, "Barcode", IIf(d!ClientID = 466, "", AddDocPreIndex(d![CaseList.FileNumber], 223, ""))
-
-'May have to put these in later
-'FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
-'FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
-'FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
 
 TotalItems = 0
 itemsFields = ""
@@ -14874,9 +13241,6 @@ FillField WordDoc, "Footer2", IIf(d![FCdetails.State] = "MD", "11/16", "")
 'FillField WordDoc, "NotaryLocation", IIf(IsNull(d!NotaryLocation), "STATE OF ______________:" & vbCr & "COUNTY OF ____________ :", d!NotaryLocation)
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Combined Affidavit of Compliance Select " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Combined Affidavit of Compliance Select " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 
@@ -14935,24 +13299,13 @@ MDBar = DLookup("MDBar", "Staff", "ID =" & [Forms]![MonitorPrint]![Attorney].Col
 FillField WordDoc, "Attorney", Forms!MonitorPrint!Attorney.Column(1) & IIf(d![JurisdictionList.State] = "MD", IIf((IsNull(MDBar) Or MDBar = ""), "", ", CPTF #:" & MDBar), "")
 FillField WordDoc, "FirmName", FirmName()
 FillField WordDoc, "FirmAddress", FirmAddress()
-'FillField WordDoc, "GetAddress", GetAddresses(150, 5, "")
 FillField WordDoc, "GetAddress", GetAddresses(0, 5, "Owner = true and (Mortgagor = true or Noteholder = true)")
 FillField WordDoc, "ThisDate", ThisDate(Date)
-'FillField WordDoc, "City", d!City
 FillField WordDoc, "LongState", d![JurisdictionList.State]
-'FillField WordDoc, "InvestorAIF", IIf([Forms]![Case List]![AIF], d![Investor] & ", by Select Portfolio Servicing, Inc., as attorney-in-fact", d![Investor])
-'FillField WordDoc, "Zip", FormatZip(d!ZipCode)
 FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber, "_________________")
 FillField WordDoc, "attEmailFirmPhone", d!EMail & vbCr & "Phone Number: " & FirmPhone()
-'FillField WordDoc, "Docket", Nz(Format(d!Docket, "mm/d/yyyy"), "___________________")
-'FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
-'FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
-'FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Motion to Intervene " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Motion to Intervene " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
 Set WordObj = Nothing
 d.Close
 
@@ -14988,46 +13341,21 @@ ElseIf d![JurisdictionList.State] = "VA" Or d![JurisdictionList.State] = "DC" Th
              DLookup("City", "Rosenberg", "ID = 2") & ", " & DLookup("State", "Rosenberg", "ID = 2") & " " & DLookup("Zip", "Rosenberg", "ID = 2")
 End If
 FillField WordDoc, "UpperJurisdiction", UCase$(d!Jurisdiction & ", " & d!LongState)
-'FillField WordDoc, "LoanNumber", d!LoanNumber
 FillField WordDoc, "MonitorTrusteeName", d!MonitorTrusteeName
 FillField WordDoc, "Client", Forms![case list]!ClientID.Column(1) '[Forms]![Case List]![ClientID].[Column](1)
 
 FillField WordDoc, "HeaderNames", d![PrimaryFirstName] & " " & d![PrimaryLastName] & vbCr & _
 IIf(Len(d![SecondaryFirstName] & " " & d![SecondaryLastName]) = 1, "", d![SecondaryFirstName] & " " & d![SecondaryLastName])
 
-'FillField WordDoc, "FirmShortAddress", FirmShortAddress(vbCr)
-'FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-'FillField WordDoc, "MortgagorNames", MortgagorNames(0, 2)
-'FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
-'FillField WordDoc, "DotDate", Format(d!DOTdate, "mmmm d, yyyy")
-'FillField WordDoc, "Names", d![PrimaryFirstName] & " " & d![PrimaryLastName] & IIf(Len(d![SecondaryFirstName] & " " & d![SecondaryLastName]) = 1, "", " and " & d![SecondaryFirstName] & " " & d![SecondaryLastName])
-'FillField WordDoc, "DotRecorded", Format(d!DOTrecorded, "mmmm d, yyyy")
-'FillField WordDoc, "Liber", d!Liber
-'FillField WordDoc, "Folio", d!Folio
-'FillField WordDoc, "Jurisdiction", d!Jurisdiction
-'FillField WordDoc, "PropertyAddressOneLine", d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt]) & ", " & d![City] & ", " & d![State] & " " & FormatZip(d![ZipCode])
-'FillField WordDoc, "Attorney", Forms!MonitorPrint!Attorney.Column(1) '[Forms]![MonitorPrint]![Attorney].[Column](1)
-'FillField WordDoc, "FirmName", FirmName()
-'FillField WordDoc, "FirmAddress", FirmAddress()
-'FillField WordDoc, "GetAddresses", GetAddresses(150, 5, "")
 FillField WordDoc, "GetAddress", GetAddresses(0, 5, "Owner = true and (Mortgagor = true or Noteholder = true)")
 
-'FillField WordDoc, "ThisDate", ThisDate(Date)
-'FillField WordDoc, "City", d!City
 FillField WordDoc, "LongState", d![JurisdictionList.State]
-'FillField WordDoc, "InvestorAIF", IIf([Forms]![Case List]![AIF], d![Investor] & ", by Select Portfolio Servicing, Inc., as attorney-in-fact", d![Investor])
-'FillField WordDoc, "Zip", FormatZip(d!ZipCode)
 FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber, "_________________")
-'FillField WordDoc, "Docket", Nz(Format(d!Docket, "mm/d/yyyy"), "___________________")
-'FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
-'FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
-'FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
+
 FillField WordDoc, "year", Format(Date, "yyyy")
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Order Granting Intervention " & d![CaseList.FileNumber] & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Order Granting Intervention " & d![CaseList.FileNumber] & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -15046,15 +13374,6 @@ End If
 Dim templateName As String
 templateName = "Statement of Debt Monitor"
 
-'If (d![ClientID] = 157) Then
-'  templateName = templateName & " Cenlar"
-'ElseIf d!ClientID = 404 Then
-'  templateName = templateName & " Bogman"
-'ElseIf (d![ClientID] = 451 And Trim(UCase$(d!Investor)) Like "LPP MORTGAGE*" And d![FCdetails.State] = "MD") Then
-'  templateName = templateName & " Dove"
-'ElseIf d![ClientID] = 451 Then
-'    templateName = templateName & " Dove"
-'End If
 templateName = templateName ' & ".doc"
 
 Set WordObj = CreateObject("Word.Application")
@@ -15096,19 +13415,9 @@ WordObj.Visible = True
 FillField WordDoc, "UpperJurisdiction", UCase$(d!Jurisdiction & ", " & d!LongState)
 FillField WordDoc, "LoanNumber", d!LoanNumber
 
-
-'If d!ClientID = 532 Then 'SELENE Finance
-'    FillField WordDoc, "Investor", IIf((d![AIF] = True And d!ClientID = 532), d![Investor] & ", by and through Selene Finance LP, its Servicer and Attorney-in-Fact", d![Investor])
-'ElseIf d!ClientID = 523 Then 'GreenTree
-'    FillField WordDoc, "Investor", IIf((d![AIF] = True And d![ClientID] = 523), d![Investor] & " by Green Tree Servicing LLC as servicer", d![Investor])
-'Else
-'    FillField WordDoc, "Investor", IIf((d!AIF = True And d!ClientID = 373), d!Investor & ", by BSI Financial Services as attorney in fact", IIf((d![AIF] = True And d![ClientID] = 523), d![Investor] & " by Green Tree Servicing LLC as servicer", IIf((d![AIF] = True And d!ClientID = 532), d![Investor] & ", by and through Selene Finance LP, its Servicer and Attorney-in-Fact", IIf((d![AIF] = True And d![ClientID] = 605), d![LongClientName] & " as Servicer for ", IIf(d![AIF] = True, d![LongClientName] & " as Attorney in Fact for ", "")))) & d![Investor])
-'End If
-
 FillField WordDoc, "MonitorTrusteeName", Nz(d!MonitorTrusteeName)
 FillField WordDoc, "FirmShortAddress", Nz(d!MonitorTrusteeAddress)
 FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-'FillField WordDoc, "MortgagorNames", MortgagorNames(0, 3, vbCr)
 FillField WordDoc, "Names", d![PrimaryFirstName] & " " & d![PrimaryLastName] & vbCr & _
 IIf(Len(d![SecondaryFirstName] & " " & d![SecondaryLastName]) = 1, "", d![SecondaryFirstName] & " " & d![SecondaryLastName])
 
@@ -15120,16 +13429,8 @@ FillField WordDoc, "State", d![FCdetails.State]
 FillField WordDoc, "Zip", FormatZip(d!ZipCode)
 FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber)
 FillField WordDoc, "Liber", LiberFolio(d![Liber], d![Folio], d![FCdetails.State], d![JurisdictionID])
-'FillField WordDoc, "LPIdate", Format$(d![LPIDate], "mmmm d, yyyy")
-'FillField WordDoc, "LPIdate+1", Format$(d![LPIDate] + 1, "mmmm d, yyyy")
-'FillField WordDoc, "LPdM", DateAdd("m", -1, d![LPIDate])
 FillField WordDoc, "OriginalPBal", Format$(d!OriginalPBal, "Currency")
-'FillField WordDoc, "PaidStr", IIf((Nz(d![RemainingPBal], 0) > Nz(d![OriginalPBal], 0)), "Additional Interest", "Paid on principal")
-'FillField WordDoc, "Paid", Format$(d!OriginalPBal - d!RemainingPBal, "Currency")
-'FillField WordDoc, "RemainingPBal", Format$(d!RemainingPBal, "Currency")
 FillField WordDoc, "InterestRate", IIf(IsNull(d!InterestRate), "____________ %", Format$(d!InterestRate, "#.000%"))
-'FillField WordDoc, "InvestorName", (Split(ReportArgs, "|")(0))
-'FillField WordDoc, "InvestorTitle", (Split(ReportArgs, "|")(1))
 FillField WordDoc, "Barcode", AddDocPreIndex(d![CaseList.FileNumber], 223, "")
 FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
 FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
@@ -15168,41 +13469,30 @@ WordDoc.Bookmarks("PropertyAddress").Select
 WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
 
 MotiontoDepositSurplus = InputBox("Motion to Deposit Surplus Monies filed date")
-'MotionToIntervene = InputBox("Motion to Intervene filed")
-OrderGranting = InputBox("Order Granting the Motion to Deposit Surplus Monies filed")
-'OrderGrantingIntervention = InputBox("Order Granting the Motion to Intervene filed")
 CheckDeposited = InputBox("Check Deposited date")
 CheckAmount = InputBox("Check Amount")
 
 FillField WordDoc, "MotionToDepositSurplus", Format(MotiontoDepositSurplus, "mmmm dd, yyyy")
-'FillField WordDoc, "MotionToIntervene", Format(MotionToIntervene, "mmmm dd, yyyy")
 FillField WordDoc, "OrderGranting", Format(OrderGranting, "mmmm dd, yyyy")
-'FillField WordDoc, "ORderGrantingIntervention", Format(OrderGrantingIntervention, "mmmm dd, yyyy")
 FillField WordDoc, "CheckDeposited", Format(CheckDeposited, "mmmm dd, yyyy")
 FillField WordDoc, "CheckAmount", Format(CheckAmount, "Currency")
 'added on 6/9/15
 FillField WordDoc, "MonitorMotionSurplusFiled", Format(d!MonitorMotionSurplusFiled, "mmmm d, yyyy")
-'StatementOfDebtDate
-'StatementOfDebtAmount
 FillField WordDoc, "StatementOfDebtDate", Format(d!StatementOfDebtDate, "mmmm d, yyyy")
 FillField WordDoc, "StatementOfDebtAmount", Format(d!StatementOfDebtAmount, "Currency")
-'MonitorOrderSurplus
 FillField WordDoc, "MonitorOrderSurplus", Format(d!MonitorOrderSurplus, "mmmm d, yyyy")
-'CourtCaseNumber
 FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber)
 
 FillField WordDoc, "UpperJurisdiction", UCase$(d!Jurisdiction & ", " & d!LongState)
-'FillField WordDoc, "LoanNumber", d!LoanNumber
 FillField WordDoc, "MonitorTrusteeName", Nz(d!MonitorTrusteeName)
 FillField WordDoc, "Client", Forms![case list]!ClientID.Column(1) '[Forms]![Case List]![ClientID].[Column](1)
 
 FillField WordDoc, "HeaderNames", d![PrimaryFirstName] & " " & d![PrimaryLastName]
 FillField WordDoc, "FirmShortAddress", FirmShortAddress(vbCr)
 FillField WordDoc, "TrusteeWord", TrusteeWord(0, 0)
-'FillField WordDoc, "MortgagorNames", MortgagorNames(0, 2)
 FillField WordDoc, "PropertyAddress", d!PropertyAddress & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
 FillField WordDoc, "DotDate", Format(d!DOTdate, "mmmm d, yyyy")
-'FillField WordDoc, "DotRecorded", Format(d!DOTrecorded, "mmmm d, yyyy")
+
 FillField WordDoc, "Liber", d!Liber
 FillField WordDoc, "Folio", Nz(d!Folio)
 FillField WordDoc, "Jurisdiction", d!Jurisdiction
@@ -15210,19 +13500,14 @@ FillField WordDoc, "Jurisdiction", d!Jurisdiction
 FillField WordDoc, "Attorney", Forms!MonitorPrint!Attorney.Column(1) '[Forms]![MonitorPrint]![Attorney].[Column](1)
 FillField WordDoc, "FirmName", FirmName()
 FillField WordDoc, "FirmAddress", FirmAddress()
-'FillField WordDoc, "GetAddress", GetAddresses(150, 5, "")
 FillField WordDoc, "GetAddress", GetAddresses(0, 5, "Owner = true and (Mortgagor = true or Noteholder = true)")
 
 FillField WordDoc, "ThisDate", ThisDate(Date)
-'FillField WordDoc, "City", d!City
 FillField WordDoc, "LongState", d![State]
-'FillField WordDoc, "InvestorAIF", IIf([Forms]![Case List]![AIF], d![Investor] & ", by Select Portfolio Servicing, Inc., as attorney-in-fact", d![Investor])
-'FillField WordDoc, "Zip", FormatZip(d!ZipCode)
+
 FillField WordDoc, "CourtCaseNumber", Nz(d!CourtCaseNumber, "_________________")
 'FillField WordDoc, "Docket", Nz(Format(d!Docket, "mm/d/yyyy"), "___________________")
-'FillField WordDoc, "AnneArundel1", IIf(d![JurisdictionID] = 3, "Address: ________________", "")
-'FillField WordDoc, "AnneArundel2", IIf(d![JurisdictionID] = 3, "               ________________", "")
-'FillField WordDoc, "AnneArundel3", IIf(d![JurisdictionID] = 3, "Phone No.: ______________", "")
+
 
 WordObj.Selection.HomeKey wdStory, wdMove
 'WordDoc.SaveAs EMailPath & "Motion to Release Funds " & d![CaseList.FileNumber] & ".doc"
@@ -15295,7 +13580,6 @@ FillField WordDoc, "Investor", Nz(d!Investor)
 FillField WordDoc, "chkInvestor", IIf(d!Investor = d!LongClientName, "present", "")
 FillField WordDoc, "JurisdictionState", d!JurisdictionState
 FillField WordDoc, "Jurisdiction", UCase$(d!Jurisdiction & ", ")
-'FillField WordDoc, "Word2", IIf(d!Investor = "Nationstar Mortgage LLC", "undersigned", d!Investor)
 FillField WordDoc, "trusteeNames", trusteeNames(0, 2)
 FillField WordDoc, "RecordingInformation", IIf(IsNull(d!Liber) = True And IsNull(d!Folio) = True, "", "Recording Information")
 FillField WordDoc, "Instrument", IIf(IsNull(d!Liber) = False And IsNull(d!Folio) = True, "Instrument: " & d!Liber & " ", IIf(IsNull(d!Liber) = False And IsNull(d!Folio) = False, "Book: " & d!Liber & ", Page: " & d!Folio & "", ""))
@@ -15306,12 +13590,9 @@ FillField WordDoc, "FirmShortAddressOneLine", FirmShortAddressOneLine()
 FillField WordDoc, "AIF", IIf(d!AIF = True, d!LongClientName & ", attorney-in-fact for " & d!Investor & " ", d!Investor)
 'FillField WordDoc, "Recording", IIf(IsNull(d!Liber) = False And IsNull(d!Folio) = True, "Instrument: " & d!Liber & " ", IIf(IsNull(d!Liber) = False And IsNull(d!Folio) = False, "Book: " & d!Liber & " , Page: " & d!Folio & ""))
 
-'FillField WordDoc, "Recording", IIf(d!Liber <> "" And d!Folio = "", "Instrument: " & d!Liber & " ", IIf(d!Liber <> "" And d!Folio <> "", "Book: " & d!Liber & " , Page: " & d!Folio & "", ""))
 
 WordObj.Selection.HomeKey wdStory, wdMove
-'WordDoc.SaveAs EMailPath & "Substitute Trustee MD Nationstar" & ".doc"
-'Call SaveDoc(WordDoc, d![CaseList.FileNumber], "Substitute Trustee MD Nationstar" & ".doc")
-'If Not Keepopen Then WordObj.Quit SaveChanges:=wdDoNotSaveChanges
+
 Set WordObj = Nothing
 d.Close
 
@@ -15322,7 +13603,7 @@ Dim WordObj As Word.Application, WordDoc As Word.Document, WordRange As Word.Ran
 Dim d, rs, rsGrantors As Recordset     ' data
 'Dim MotiontoDepositSurplus, MotionToIntervene, OrderGranting, OrderGrantingIntervention, CheckDeposited, CheckAmount As String
 
-'Set d = CurrentDb.OpenRecordset("SELECT * FROM qrySOT_VA_Nations WHERE CaseList.FileNumber=" & Forms![Case List]!FileNumber & " AND FcDetails.Current = TRUE;", dbOpenSnapshot)
+List]!FileNumber & " AND FcDetails.Current = TRUE;", dbOpenSnapshot)
 Set d = CurrentDb.OpenRecordset("SELECT * FROM SOT_VA_Nations WHERE CaseList.FileNumber=" & [Forms]![case list]![FileNumber], dbOpenSnapshot)
 Set rs = CurrentDb.OpenRecordset("SELECT Name FROM qryTrustees WHERE FileNumber=" & [Forms]![case list]![FileNumber], dbOpenSnapshot)
 Set rsGrantors = CurrentDb.OpenRecordset("Select * from qryNationsVASOTWord where FileNumber=" & Forms![case list]!FileNumber, dbOpenSnapshot)
@@ -15344,7 +13625,6 @@ WordDoc.Bookmarks("ProName").Range.Text = d![PrimaryDefName]
 WordDoc.Bookmarks("PropertyAddress").Select
 WordDoc.Bookmarks("PropertyAddress").Range.Text = d![PropertyAddress] & IIf(Len(d![Fair Debt] & "") = 0, "", ", " & d![Fair Debt])
 
-'margin address:
     If (IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) And d![FCState] = "VA") Or (IsNull([Forms]![foreclosurePrint]![cboOfficeLocation]) And d![FCState] = "DC") _
                     Or ([Forms]![foreclosurePrint]![cboOfficeLocation] = 2) Then
         FillField WordDoc, "mFirmAddr", "Commonwealth Trustees, LLC " & vbCr & DLookup("AddressLine", "Rosenberg", "ID = 2") & vbCr & _
@@ -15901,8 +14181,7 @@ If Not rsdef.EOF Then
             check = True
         Case 2
             'Case 1
-'         Call OpenDocAsSaved("DC Complaint - 1")
-'        Set WordDoc = WordObj.Documents.Open(EMailPath & "DC Complaint - 1.doc", False)
+
             Select Case cnt ' read only
                 Case 1
                     Call OpenDocAsSaved("DC Complaint_QT")
@@ -16012,7 +14291,6 @@ End If
   FillField WordDoc, "AddressLine", rs!AddressLine
   FillField WordDoc, "Cityline", rs!City & ", " & rs!State & " " & FormatZip(rs!Zip)
   FillField WordDoc, "DOT/MortgageDate", IIf(IsNull(d!DOTdate), "", Format$(d!DOTdate, "mmmm d, yyyy"))
-'2/5/16 DEFENDANTS
  
 cnt = 0
 
@@ -16109,7 +14387,6 @@ rsdef.Close
 Set rsdef = Nothing
 End If
 
-'pay off part
 Set rsPayoff = CurrentDb.OpenRecordset("SELECT Desc,  Amount FROM Payoff WHERE FileNumber=" & d![CaseList.FileNumber], dbOpenSnapshot)
 If rsPayoff.EOF Then
      FillField WordDoc, "Payoff_Items", ""
@@ -16152,25 +14429,6 @@ rs.Close
 Set d = Nothing
 Set rs = Nothing
 
-'uploade word doc to Rosie 5/20/16
-
-'If check = True Then
-'
-''Dim Fname, ct As String
-''    ct = Format$(Now(), "yyyymmdd hhnnss")
-''    Fname = "DC Complaint to Quiet Title" & "_" & ct & ".doc"
-''   ' Call UploadWordDoc(Fnum, "" & Fname & "")
-''  '  Call SaveDocNew(WordDoc, Fnum, "" & Fname & "")
-''    'Forms![case list].Requery
-'End If
-    
-'If Not KeepOpen Then WordObj.Quit Savechanges:=wdDoNotSaveChanges
-
-'WordObj.Quit Savechanges:=wdSaveChanges
-'Set WordObj = Nothing
-'
-''add journal and message here
-'DoCmd.Close acForm, "GetDocType"
 
 
 If Forms!GetDocType!Frame1 = 1 Then
