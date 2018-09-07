@@ -7618,7 +7618,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
-Option Compare Database
+Option Compare Database   '9/7/18   Git test   Mei
 Option Explicit
 Dim P_Old, S_Old, M_Old, dcheck As Boolean
 Dim sComment As String
