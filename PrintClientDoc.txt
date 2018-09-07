@@ -96,7 +96,7 @@ Begin Form
             GridlineWidthBottom =1
         End
         Begin CommandButton
-            FontSize =9			'Mei 9/7/18
+            FontSize = 11			'Mei 9/7/18
             FontWeight =400
             ForeColor =-2147483630
             FontName ="MS Sans Serif"
