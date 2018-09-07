@@ -13043,7 +13043,7 @@ End If
 
 End Sub
 
-Private Sub DocBackSOD_AfterUpdate()
+Private Sub DocBackSOD_AfterUpdate()      'make a change for Github   9/7/18
 If Me.Dirty Then DoCmd.RunCommand acCmdSaveRecord
 If DocBackSOD Then
     AddStatus FileNumber, Date, "Received Statement of Debt"
