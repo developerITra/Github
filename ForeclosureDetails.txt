@@ -15086,25 +15086,7 @@ If Not BHproject Then
              
             Cost = DLookup("ivalue", "db", "ID=" & 33) / 100
             AddInvoiceItem FileNumber, "FC-BND", "Bond Issued", Cost, 191, False, True, False, False
-            
-'        ElseIf Me.State = "DC" Then
-'
-'            Dim i As Integer
-'            i = Forms!ForeclosureDetails!sfrmDCBondVendor!cobBond.Column(0)
-'            cost = 100
-'
-'            AddStatus FileNumber, Now(), "DC initial Bond Ordering Cost"
-'            Forms!ForeclosureDetails!sfrmStatus.Requery
-'
-'            AddInvoiceItem FileNumber, "FC-BND", "DC initial Bond Ordering Cost", cost, i, False, False, False, False
-'
-'            DoCmd.SetWarnings False
-'
-'            strSQLJournal = "Insert into Journal (FileNumber,JournalDate,Who,Info,Color) Values(Forms!ForeclosureDetails.FileNumber,Now,GetFullName(),'" & "DC initial Bond Ordering Cost" & "',1 )"
-'            DoCmd.RunSQL strSQLJournal
-'            DoCmd.SetWarnings True
-'            Forms!Journal.Requery
-                
+                           
         End If
                    
     Else
