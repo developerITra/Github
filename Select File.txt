@@ -361,6 +361,4 @@ Private Sub List_Click()
 FileNum = List.Value
 End Sub
 
-Private Sub List_DblClick(Cancel As Integer)
-Call cmdOK_Click        'make some difference 9/12/18
-End Sub
+
